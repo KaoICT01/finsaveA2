@@ -1,0 +1,1640 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>FinSave ProX 2026 (v2.6.0)</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts: Sarabun & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Sarabun', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              900: '#14532d',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Prevent screen shifting/bouncing on mobile devices */
+    html, body {
+      height: 100%;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior-y: contain;
+      scroll-behavior: smooth;
+    }
+    
+    /* Modern Glassmorphism Styles with High Contrast Borders */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+    
+    .dark .glass-panel {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* Hide standard scrollbars */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* High-contrast smooth focus ring outline */
+    input:focus {
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+    }
+
+    /* Dynamic pulse animation for live safety warnings */
+    @keyframes pulse-red {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.8; }
+    }
+    .animate-pulse-red {
+      animation: pulse-red 2s infinite;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans min-h-full transition-colors duration-300 flex flex-col pb-20 md:pb-0">
+
+  <!-- ================= MAINTENANCE & LOCK SCREEN ================= -->
+  <div id="lockScreen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/95 backdrop-blur-md hidden">
+    <div class="glass-panel max-w-md w-full rounded-3xl p-8 text-center border border-red-500/30 shadow-2xl">
+      <div class="w-20 h-20 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl animate-bounce">
+        <i class="fa-solid fa-ban"></i>
+      </div>
+      <h2 id="lockTitle" class="text-2xl font-black text-slate-900 dark:text-white mb-4">SYSTEM CLOSED</h2>
+      <p id="lockMessage" class="text-slate-600 dark:text-slate-200 text-sm leading-relaxed mb-6 font-medium">
+        This platform is locked on weekends and holidays to protect financial discipline.
+      </p>
+      <div class="text-xs text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-white/10 pt-4 font-bold uppercase tracking-wider">
+        FinSave ProX 2026 • Security Protocol Active
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= CUSTOM CONFIRMATION MODAL (NO ALERT/CONFIRM) ================= -->
+  <div id="confirmModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm hidden">
+    <div class="glass-panel max-w-sm w-full rounded-3xl p-6 border border-slate-200/60 dark:border-slate-800/60 text-center shadow-2xl">
+      <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <h3 class="text-base font-black text-slate-900 dark:text-white mb-2" id="confirmTitle">Confirm Action</h3>
+      <p class="text-xs text-slate-600 dark:text-slate-300 mb-6 font-medium leading-relaxed" id="confirmMessage">Are you sure you want to proceed?</p>
+      <div class="flex gap-3 justify-center">
+        <button id="confirmCancelBtn" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-extrabold transition-all">
+          Cancel
+        </button>
+        <button id="confirmConfirmBtn" class="px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl text-xs font-extrabold transition-all shadow-md shadow-red-500/20">
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= HEADER & ENGLISH SMART NAVIGATION ================= -->
+  <header class="sticky top-0 z-40 w-full glass-panel transition-all duration-300 border-b border-slate-200/60 dark:border-slate-800/60 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-2.5">
+        <div class="w-10 h-10 bg-brand-500 text-white rounded-xl flex items-center justify-center shadow-lg shadow-brand-500/20">
+          <i class="fa-solid fa-wallet text-lg"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-black tracking-tight bg-gradient-to-r from-brand-600 to-emerald-500 dark:from-brand-500 dark:to-emerald-400 bg-clip-text text-transparent leading-none">FinSave ProX</h1>
+          <p class="text-[10px] font-black text-brand-600 dark:text-brand-400 tracking-wider mt-0.5">FEATURE VERSION 2.6.0</p>
+        </div>
+      </div>
+
+      <!-- Desktop Nav (All English) -->
+      <nav class="hidden md:flex items-center gap-1">
+        <button onclick="switchTab('dashboard')" class="nav-btn px-4 py-2 rounded-xl text-xs font-extrabold transition-all duration-200 text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-500/10" data-tab="dashboard">
+          <i class="fa-solid fa-chart-pie mr-1.5 text-xs"></i> Dashboard
+        </button>
+        <button onclick="switchTab('save-record')" class="nav-btn px-4 py-2 rounded-xl text-xs font-extrabold transition-all duration-200 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800" data-tab="save-record">
+          <i class="fa-solid fa-circle-plus mr-1.5 text-xs"></i> Save Record
+        </button>
+        <button onclick="switchTab('goals')" class="nav-btn px-4 py-2 rounded-xl text-xs font-extrabold transition-all duration-200 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800" data-tab="goals">
+          <i class="fa-solid fa-bullseye mr-1.5 text-xs"></i> Goals
+        </button>
+        <button onclick="switchTab('analytics')" class="nav-btn px-4 py-2 rounded-xl text-xs font-extrabold transition-all duration-200 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800" data-tab="analytics">
+          <i class="fa-solid fa-chart-line mr-1.5 text-xs"></i> Analytics
+        </button>
+        <button onclick="switchTab('ranks')" class="nav-btn px-4 py-2 rounded-xl text-xs font-extrabold transition-all duration-200 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800" data-tab="ranks">
+          <i class="fa-solid fa-trophy mr-1.5 text-xs"></i> Ranks
+        </button>
+        <button onclick="switchTab('history')" class="nav-btn px-4 py-2 rounded-xl text-xs font-extrabold transition-all duration-200 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800" data-tab="history">
+          <i class="fa-solid fa-history mr-1.5 text-xs"></i> History
+        </button>
+        <button onclick="switchTab('settings')" class="nav-btn px-4 py-2 rounded-xl text-xs font-extrabold transition-all duration-200 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800" data-tab="settings">
+          <i class="fa-solid fa-cog mr-1.5 text-xs"></i> Settings
+        </button>
+      </nav>
+
+      <!-- Security Controls & Bell Center -->
+      <div class="flex items-center gap-3">
+        <!-- Real-time FX Rates Panel -->
+        <div class="hidden sm:flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800/80 px-3.5 py-1.5 rounded-full text-[11px] font-black border border-slate-200/50 dark:border-slate-700/50">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="text-slate-500 dark:text-slate-300">1 USD =</span>
+          <span id="fxRate" class="text-brand-600 dark:text-brand-400">34.50 THB</span>
+        </div>
+
+        <!-- High contrast Notification center bell -->
+        <div class="relative">
+          <button onclick="toggleNotifications()" class="relative p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors">
+            <i class="fa-regular fa-bell text-xl"></i>
+            <span id="bellDot" class="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse-red hidden"></span>
+          </button>
+          
+          <!-- Dropdown message list board -->
+          <div id="notiDropdown" class="absolute right-0 mt-3 w-80 max-w-sm rounded-2xl glass-panel shadow-2xl border border-slate-200 dark:border-slate-800 py-3 hidden z-50">
+            <div class="flex items-center justify-between px-4 pb-2 border-b border-slate-200 dark:border-slate-800">
+              <span class="font-extrabold text-[11px] uppercase tracking-wider text-slate-700 dark:text-slate-300">Notification Hub</span>
+              <button onclick="clearNotifications()" class="text-[10px] font-black text-red-500 hover:text-red-600">Clear All</button>
+            </div>
+            <div id="notiList" class="max-h-64 overflow-y-auto px-2 py-1 space-y-1 divide-y divide-slate-100 dark:divide-slate-800/50">
+              <p class="text-[11px] text-slate-400 text-center py-6">No new notifications</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MOBILE NAVIGATION BAR (BOTTOM) ================= -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 glass-panel border-t border-slate-200/60 dark:border-slate-800/60 shadow-[0_-4px_12px_rgba(0,0,0,0.03)] px-1 flex justify-around items-center h-16">
+    <button onclick="switchTab('dashboard')" class="mobile-nav-btn flex flex-col items-center justify-center flex-1 h-full text-brand-600 dark:text-brand-400" data-tab="dashboard">
+      <i class="fa-solid fa-chart-pie text-lg"></i>
+      <span class="text-[10px] mt-1 font-bold">Dashboard</span>
+    </button>
+    <button onclick="switchTab('save-record')" class="mobile-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-400 dark:text-slate-400" data-tab="save-record">
+      <i class="fa-solid fa-circle-plus text-lg"></i>
+      <span class="text-[10px] mt-1 font-bold">Record</span>
+    </button>
+    <button onclick="switchTab('goals')" class="mobile-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-400 dark:text-slate-400" data-tab="goals">
+      <i class="fa-solid fa-bullseye text-lg"></i>
+      <span class="text-[10px] mt-1 font-bold">Goals</span>
+    </button>
+    <button onclick="switchTab('analytics')" class="mobile-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-400 dark:text-slate-400" data-tab="analytics">
+      <i class="fa-solid fa-chart-line text-lg"></i>
+      <span class="text-[10px] mt-1 font-bold">Analytics</span>
+    </button>
+    <button onclick="switchTab('history')" class="mobile-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-400 dark:text-slate-400" data-tab="history">
+      <i class="fa-solid fa-history text-lg"></i>
+      <span class="text-[10px] mt-1 font-bold">History</span>
+    </button>
+    <button onclick="switchTab('settings')" class="mobile-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-400 dark:text-slate-400" data-tab="settings">
+      <i class="fa-solid fa-cog text-lg"></i>
+      <span class="text-[10px] mt-1 font-bold">Settings</span>
+    </button>
+  </nav>
+
+  <!-- ================= MAIN CONTAINER ================= -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    
+    <!-- 1. DASHBOARD TAB -->
+    <div id="tab-dashboard" class="tab-content space-y-6">
+      <!-- Overview Statistics -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <!-- Net Savings Balance -->
+        <div class="glass-panel p-5 rounded-3xl relative overflow-hidden group shadow-sm transition-all">
+          <div class="absolute right-3 top-3 w-10 h-10 bg-brand-500/10 text-brand-500 rounded-full flex items-center justify-center text-sm">
+            <i class="fa-solid fa-piggy-bank"></i>
+          </div>
+          <p class="text-xs font-extrabold text-slate-500 dark:text-slate-400 tracking-wide uppercase">Net Savings</p>
+          <p class="text-2xl font-black mt-2 text-slate-900 dark:text-white" id="statNetSavings">฿0.00</p>
+          <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1 font-bold">
+            <span id="statNetSavingsUSD" class="font-extrabold text-emerald-500 dark:text-emerald-400">($0.00)</span>
+            <span>Converted USD</span>
+          </div>
+        </div>
+
+        <!-- Savings Streak -->
+        <div class="glass-panel p-5 rounded-3xl relative overflow-hidden group shadow-sm transition-all">
+          <div class="absolute right-3 top-3 w-10 h-10 bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center text-sm">
+            <i class="fa-solid fa-fire"></i>
+          </div>
+          <p class="text-xs font-extrabold text-slate-500 dark:text-slate-400 tracking-wide uppercase">Savings Streak</p>
+          <p class="text-2xl font-black mt-2 text-slate-900 dark:text-white" id="statStreak">0 Days</p>
+          <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-medium">
+            Based on consecutive records
+          </div>
+        </div>
+
+        <!-- Saver Rank Status -->
+        <div class="glass-panel p-5 rounded-3xl relative overflow-hidden group shadow-sm transition-all cursor-pointer" onclick="switchTab('ranks')">
+          <div class="absolute right-3 top-3 w-10 h-10 bg-indigo-500/10 text-indigo-500 rounded-full flex items-center justify-center text-sm">
+            <i class="fa-solid fa-award"></i>
+          </div>
+          <p class="text-xs font-extrabold text-slate-500 dark:text-slate-400 tracking-wide uppercase">Saver Rank</p>
+          <p class="text-2xl font-black mt-2 text-indigo-600 dark:text-indigo-400" id="statRank">Beginner</p>
+          <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-2 flex items-center gap-1 font-bold">
+            <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+              <div id="statRankProgress" class="bg-indigo-500 h-full w-[10%]"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Emergency Reserve Funds -->
+        <div class="glass-panel p-5 rounded-3xl relative overflow-hidden group shadow-sm transition-all">
+          <div class="absolute right-3 top-3 w-10 h-10 bg-blue-500/10 text-blue-500 rounded-full flex items-center justify-center text-sm">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <p class="text-xs font-extrabold text-slate-500 dark:text-slate-400 tracking-wide uppercase">Emergency Fund</p>
+          <p class="text-2xl font-black mt-2 text-slate-900 dark:text-white" id="statEmergencyFund">฿0.00</p>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-bold">30% of total savings</p>
+        </div>
+
+      </div>
+
+      <!-- Quick Stats Metrics -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="glass-panel p-4 rounded-2xl flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-sm"><i class="fa-solid fa-flag"></i></div>
+          <div>
+            <div class="text-[10px] text-slate-500 dark:text-slate-400 font-extrabold uppercase">Total Goals</div>
+            <div class="text-base font-black" id="statGoalsCount">0</div>
+          </div>
+        </div>
+        <div class="glass-panel p-4 rounded-2xl flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-teal-500/10 text-teal-500 flex items-center justify-center text-sm"><i class="fa-solid fa-circle-check"></i></div>
+          <div>
+            <div class="text-[10px] text-slate-500 dark:text-slate-400 font-extrabold uppercase">Completed</div>
+            <div class="text-base font-black" id="statGoalsSuccess">0</div>
+          </div>
+        </div>
+        <div class="glass-panel p-4 rounded-2xl flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-sky-500/10 text-sky-500 flex items-center justify-center text-sm"><i class="fa-solid fa-receipt"></i></div>
+          <div>
+            <div class="text-[10px] text-slate-500 dark:text-slate-400 font-extrabold uppercase">Records Count</div>
+            <div class="text-base font-black" id="statSavesCount">0</div>
+          </div>
+        </div>
+        <div class="glass-panel p-4 rounded-2xl flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center text-sm"><i class="fa-solid fa-calendar-day"></i></div>
+          <div>
+            <div class="text-[10px] text-slate-500 dark:text-slate-400 font-extrabold uppercase">Daily Average</div>
+            <div class="text-base font-black" id="statAvgSaving">฿0.00</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Heatmap & AI Dashboard Advisory -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Heatmap Calendar -->
+        <div class="lg:col-span-7 glass-panel p-6 rounded-3xl flex flex-col justify-between border border-slate-200/50 dark:border-slate-800/50">
+          <div>
+            <div class="flex items-center justify-between mb-4 gap-4 flex-wrap">
+              <div>
+                <h3 class="text-base font-black text-slate-900 dark:text-white">Saving Heatmap Calendar</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-350">Display frequency & saving value. Red signals low savings, Green signifies high savings.</p>
+              </div>
+              <div class="flex items-center gap-1.5 text-[10px] font-black">
+                <span class="text-red-500">Low</span>
+                <span class="w-3 h-3 bg-red-400 dark:bg-red-500 rounded-sm"></span>
+                <span class="w-3 h-3 bg-amber-400 dark:bg-amber-500 rounded-sm"></span>
+                <span class="w-3 h-3 bg-emerald-400 dark:bg-emerald-500 rounded-sm"></span>
+                <span class="w-3 h-3 bg-green-600 rounded-sm"></span>
+                <span class="text-green-600">High</span>
+              </div>
+            </div>
+
+            <div class="overflow-x-auto no-scrollbar pb-2">
+              <div class="grid grid-flow-col grid-rows-7 gap-1.5 w-max max-w-full" id="heatmapGrid">
+                <!-- Programmatically generated -->
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800/80 flex justify-between items-center text-xs text-slate-500 dark:text-slate-400 font-extrabold">
+            <span>* Synchronized directly with actual logged history events</span>
+            <span class="font-black text-brand-600 dark:text-brand-400" id="statFrequencyPercent">0% consistency</span>
+          </div>
+        </div>
+
+        <!-- Real-time AI advisory predictor -->
+        <div class="lg:col-span-5 glass-panel p-6 rounded-3xl flex flex-col justify-between relative overflow-hidden border border-slate-200/50 dark:border-slate-800/50">
+          <div class="absolute right-0 bottom-0 translate-x-4 translate-y-4 opacity-5 pointer-events-none">
+            <i class="fa-solid fa-brain text-9xl text-indigo-500"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2 mb-3">
+              <span class="px-2.5 py-0.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-md text-[10px] font-black tracking-wider">AI PREDICTOR ENGINE</span>
+              <h3 class="text-base font-black text-slate-900 dark:text-white">Smart Advisory</h3>
+            </div>
+            
+            <div class="space-y-4 mt-4">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-500 flex items-center justify-center text-sm mt-0.5">
+                  <i class="fa-solid fa-heart-pulse"></i>
+                </div>
+                <div>
+                  <div class="text-xs text-slate-500 dark:text-slate-400 font-extrabold uppercase">Savings Health Score</div>
+                  <div class="text-lg font-black flex items-center gap-2 mt-0.5">
+                    <span id="aiHealthScore">-- / 100</span>
+                    <span class="text-xs font-bold text-slate-400" id="aiHealthText">(Calculating state stability...)</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-lg bg-brand-500/10 text-brand-500 flex items-center justify-center text-sm mt-0.5">
+                  <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+                <div>
+                  <div class="text-xs text-slate-500 dark:text-slate-400 font-extrabold uppercase">Growth Behavior Forecast</div>
+                  <p class="text-xs text-slate-800 dark:text-slate-200 mt-1 leading-relaxed italic font-bold" id="aiDashboardAdvice">
+                    "Analyzing historic transactions to formulate precise predictions..."
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-5">
+            <button onclick="switchTab('analytics')" class="w-full bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 py-3 rounded-2xl text-xs font-black transition-all shadow-md uppercase tracking-wider">
+              Full AI Analysis Report
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- 2. SAVE RECORD TAB -->
+    <div id="tab-save-record" class="tab-content hidden max-w-xl mx-auto">
+      <div class="glass-panel p-6 sm:p-8 rounded-3xl shadow-lg border border-slate-200/50 dark:border-slate-800/50">
+        <div class="text-center mb-6">
+          <div class="w-14 h-14 bg-brand-500/10 text-brand-500 rounded-2xl flex items-center justify-center mx-auto text-2xl mb-3 shadow-inner">
+            <i class="fa-solid fa-circle-plus"></i>
+          </div>
+          <h2 class="text-xl font-black text-slate-900 dark:text-white">Save Your Funds</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-bold">System logs dates automatically to ensure integrity. Backdating is restricted.</p>
+        </div>
+
+        <form id="saveRecordForm" onsubmit="handleSaveRecord(event)" class="space-y-5">
+          <!-- Saving Amount -->
+          <div>
+            <label class="block text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Saving Amount (THB)</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400 font-extrabold text-lg">฿</span>
+              <input type="number" step="0.01" id="saveAmount" required min="1" placeholder="0.00" class="w-full pl-9 pr-4 py-3.5 bg-slate-100 dark:bg-slate-800/50 border border-transparent focus:border-brand-500 focus:bg-white dark:focus:bg-slate-900 text-slate-900 dark:text-white rounded-2xl font-black text-lg outline-none transition-all">
+            </div>
+          </div>
+
+          <!-- Description memo -->
+          <div>
+            <label class="block text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Memo / Description</label>
+            <input type="text" id="saveMemo" required placeholder="e.g., Weekly leftover, Reward bonus" class="w-full px-4 py-3.5 bg-slate-100 dark:bg-slate-800/50 border border-transparent focus:border-brand-500 focus:bg-white dark:focus:bg-slate-900 text-slate-900 dark:text-white rounded-2xl text-sm font-bold outline-none transition-all">
+          </div>
+
+          <!-- Transaction Policy Alert -->
+          <div class="bg-blue-500/10 text-blue-700 dark:text-blue-300 px-4 py-3 rounded-2xl text-xs flex items-start gap-2.5 border border-blue-500/10 font-bold leading-relaxed">
+            <i class="fa-solid fa-circle-info mt-0.5 text-sm"></i>
+            <div>
+              <span class="font-extrabold block text-slate-900 dark:text-white uppercase mb-0.5">Asset Discipline Protection</span>
+              The system rejects logging between 23:00 - 00:00 to keep high standards of timely asset logs.
+            </div>
+          </div>
+
+          <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-black py-4 px-6 rounded-2xl shadow-lg shadow-brand-500/25 transition-all flex items-center justify-center gap-2 uppercase tracking-wider text-xs">
+            <i class="fa-solid fa-check text-lg"></i> Commit Savings
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 3. GOALS TAB -->
+    <div id="tab-goals" class="tab-content hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-black text-slate-900 dark:text-white">Active Savings Goals</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 font-bold">Track and accomplish multiple dynamic financial wishes simultaneously.</p>
+        </div>
+        <button onclick="openModal('goalModal')" class="bg-brand-500 hover:bg-brand-600 text-white font-black px-4 py-2.5 rounded-2xl text-xs transition-colors flex items-center justify-center gap-2 shadow-md uppercase tracking-wider">
+          <i class="fa-solid fa-plus"></i> New Goal
+        </button>
+      </div>
+
+      <!-- Goals rendering Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="goalsGrid">
+        <!-- Dyn generated -->
+      </div>
+    </div>
+
+    <!-- 4. ANALYTICS TAB -->
+    <div id="tab-analytics" class="tab-content hidden space-y-6">
+      
+      <!-- AI Engine Analytics -->
+      <div class="glass-panel p-6 sm:p-8 rounded-3xl relative overflow-hidden border border-indigo-500/15 shadow-sm">
+        <div class="absolute right-0 top-0 translate-x-12 -translate-y-12 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        
+        <div class="flex flex-col md:flex-row gap-6 md:items-center justify-between">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-lg text-xs font-black uppercase tracking-widest">
+              <i class="fa-solid fa-brain animate-pulse"></i> Engine v2.6.0
+            </div>
+            <h3 class="text-xl font-black text-slate-900 dark:text-white">Growth & Discipline Matrix</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-350 max-w-xl font-bold">Evaluates consistent saving ratios, daily accumulations, and future assets in real time.</p>
+          </div>
+          
+          <div class="flex items-center gap-3">
+            <div class="text-right">
+              <span class="text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Daily Asset Speed</span>
+              <div class="text-lg font-black text-brand-600 dark:text-brand-400" id="aiAvgDaily">฿0.00 / Day</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+          <div class="bg-indigo-500/5 dark:bg-slate-900/30 p-4 rounded-2xl border border-indigo-500/10">
+            <h4 class="text-xs font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-chart-line"></i> Growth Trends
+            </h4>
+            <p class="text-xs text-slate-800 dark:text-slate-200 mt-2 leading-relaxed font-bold" id="aiAdviceGrowth">
+              Waiting for sufficient historic inputs...
+            </p>
+          </div>
+          
+          <div class="bg-brand-500/5 dark:bg-slate-900/30 p-4 rounded-2xl border border-brand-500/10">
+            <h4 class="text-xs font-black text-brand-600 dark:text-brand-400 uppercase tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-calendar-check"></i> Target Estimation
+            </h4>
+            <p class="text-xs text-slate-800 dark:text-slate-200 mt-2 leading-relaxed font-bold" id="aiAdviceTarget">
+              No active goals under evaluation. Create one to begin prediction metrics.
+            </p>
+          </div>
+
+          <div class="bg-amber-500/5 dark:bg-slate-900/30 p-4 rounded-2xl border border-amber-500/10">
+            <h4 class="text-xs font-black text-amber-600 dark:text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-seedling"></i> Strategy Advice
+            </h4>
+            <p class="text-xs text-slate-800 dark:text-slate-200 mt-2 leading-relaxed font-bold" id="aiAdviceAdvice">
+              Maintain a continuous 3-day saving streak to unlock deeper analytics.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real-time SVG Graph Area -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <div class="lg:col-span-8 glass-panel p-6 rounded-3xl border border-slate-200/50 dark:border-slate-800/50 shadow-sm">
+          <div class="mb-4">
+            <h3 class="text-sm font-black text-slate-900 dark:text-white">Savings Cumulative Progress Chart</h3>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 font-bold">Plots growth history automatically on new asset commit logs.</p>
+          </div>
+
+          <div class="relative w-full h-64 bg-slate-100/50 dark:bg-slate-900/30 rounded-2xl flex items-end justify-center p-4 border border-slate-200/40 dark:border-slate-800">
+            <svg id="savingChart" class="w-full h-full text-brand-500" viewBox="0 0 500 200" preserveAspectRatio="none">
+              <line x1="0" y1="50" x2="500" y2="50" stroke="rgba(156, 163, 175, 0.15)" stroke-dasharray="4" />
+              <line x1="0" y1="100" x2="500" y2="100" stroke="rgba(156, 163, 175, 0.15)" stroke-dasharray="4" />
+              <line x1="0" y1="150" x2="500" y2="150" stroke="rgba(156, 163, 175, 0.15)" stroke-dasharray="4" />
+              
+              <path id="chartPath" d="" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" class="transition-all duration-500"></path>
+              <path id="chartAreaPath" d="" fill="url(#chartGrad)" opacity="0.15" class="transition-all duration-500"></path>
+
+              <defs>
+                <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#22c55e" />
+                  <stop offset="100%" stop-color="#22c55e" stop-opacity="0" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div id="chartNoData" class="absolute inset-0 flex items-center justify-center text-xs text-slate-500 dark:text-slate-400 font-black bg-slate-100/10 dark:bg-slate-900/10">
+              Commit a record to generate line coordinates.
+            </div>
+          </div>
+          <div class="flex justify-between text-[10px] text-slate-500 dark:text-slate-400 mt-2.5 px-1 font-bold">
+            <span>START</span>
+            <span>CUMULATIVE METRICS</span>
+            <span>CURRENT YIELD (฿)</span>
+          </div>
+        </div>
+
+        <!-- Analytical Breakdown -->
+        <div class="lg:col-span-4 glass-panel p-6 rounded-3xl flex flex-col justify-between border border-slate-200/50 dark:border-slate-800/50 shadow-sm">
+          <div>
+            <h3 class="text-sm font-black mb-4 text-slate-900 dark:text-white uppercase tracking-wider">Historical Comparison</h3>
+            <div class="space-y-4" id="monthlyStatsList">
+              <div class="text-center py-8 text-xs text-slate-400 font-bold">
+                Awaiting historic records to calculate ratios.
+              </div>
+            </div>
+          </div>
+          <div class="border-t border-slate-200 dark:border-slate-800 pt-4 mt-4 text-center">
+            <span class="text-[10px] text-slate-500 dark:text-slate-400 font-extrabold uppercase tracking-widest">Calculated Securely</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- 5. RANKS TAB -->
+    <div id="tab-ranks" class="tab-content hidden space-y-6">
+      <div class="glass-panel p-6 sm:p-8 rounded-3xl text-center relative overflow-hidden max-w-2xl mx-auto border border-slate-200/50 dark:border-slate-800/50 shadow-sm">
+        <div class="absolute right-0 bottom-0 translate-x-8 translate-y-8 opacity-5 pointer-events-none">
+          <i class="fa-solid fa-trophy text-9xl text-amber-500"></i>
+        </div>
+
+        <div id="rankTrophy" class="w-18 h-18 bg-amber-500/10 text-amber-500 rounded-3xl flex items-center justify-center mx-auto text-3xl mb-4">
+          <i class="fa-solid fa-trophy animate-bounce"></i>
+        </div>
+        <h2 class="text-xl font-black text-slate-900 dark:text-white">Saver Ranks Mapping</h2>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-bold">Dynamic tiers calculated seamlessly against aggregate validated net assets.</p>
+        
+        <div class="mt-6 flex justify-center items-center gap-1.5 bg-slate-100 dark:bg-slate-800/60 px-4 py-2.5 rounded-2xl w-max mx-auto text-xs font-black border border-slate-200 dark:border-slate-800">
+          <span>Your Current Tier:</span>
+          <span class="text-brand-600 dark:text-brand-400 font-black" id="rankBadgeText">Beginner</span>
+        </div>
+      </div>
+
+      <div class="max-w-xl mx-auto space-y-3">
+        <!-- Beginner Tier Card -->
+        <div class="glass-panel p-4 rounded-2xl flex items-center justify-between border-l-4 border-slate-400" id="rank-card-Beginner">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-slate-400/10 text-slate-500 flex items-center justify-center text-base"><i class="fa-solid fa-seedling"></i></div>
+            <div>
+              <div class="text-xs font-black">Beginner</div>
+              <div class="text-[10px] text-slate-500 dark:text-slate-400 font-bold">First step toward secure capital formulation.</div>
+            </div>
+          </div>
+          <span class="text-[10px] bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-full font-black uppercase tracking-wider">Default</span>
+        </div>
+
+        <!-- Bronze Tier Card -->
+        <div class="glass-panel p-4 rounded-2xl flex items-center justify-between border-l-4 border-amber-600 opacity-60" id="rank-card-Bronze">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-600/10 text-amber-700 flex items-center justify-center text-base"><i class="fa-solid fa-medal"></i></div>
+            <div>
+              <div class="text-xs font-black">Bronze</div>
+              <div class="text-[10px] text-slate-500 dark:text-slate-400 font-bold">Unlocks at cumulative assets of ฿500.00</div>
+            </div>
+          </div>
+          <span class="text-[10px] bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-full font-black text-slate-500" id="rank-status-Bronze">฿500 req.</span>
+        </div>
+
+        <!-- Silver Tier Card -->
+        <div class="glass-panel p-4 rounded-2xl flex items-center justify-between border-l-4 border-slate-300 opacity-60" id="rank-card-Silver">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-slate-300/10 text-slate-400 flex items-center justify-center text-base"><i class="fa-solid fa-medal"></i></div>
+            <div>
+              <div class="text-xs font-black">Silver</div>
+              <div class="text-[10px] text-slate-500 dark:text-slate-400 font-bold">Unlocks at cumulative assets of ฿2,000.00</div>
+            </div>
+          </div>
+          <span class="text-[10px] bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-full font-black text-slate-500" id="rank-status-Silver">฿2,000 req.</span>
+        </div>
+
+        <!-- Gold Tier Card -->
+        <div class="glass-panel p-4 rounded-2xl flex items-center justify-between border-l-4 border-amber-400 opacity-60" id="rank-card-Gold">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-400/10 text-amber-500 flex items-center justify-center text-base"><i class="fa-solid fa-award"></i></div>
+            <div>
+              <div class="text-xs font-black">Gold</div>
+              <div class="text-[10px] text-slate-500 dark:text-slate-400 font-bold">Unlocks at cumulative assets of ฿10,000.00</div>
+            </div>
+          </div>
+          <span class="text-[10px] bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-full font-black text-slate-500" id="rank-status-Gold">฿10,000 req.</span>
+        </div>
+
+        <!-- Platinum Tier Card -->
+        <div class="glass-panel p-4 rounded-2xl flex items-center justify-between border-l-4 border-indigo-400 opacity-60" id="rank-card-Platinum">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-indigo-400/10 text-indigo-500 flex items-center justify-center text-base"><i class="fa-solid fa-crown"></i></div>
+            <div>
+              <div class="text-xs font-black">Platinum</div>
+              <div class="text-[10px] text-slate-500 dark:text-slate-400 font-bold">Unlocks at cumulative assets of ฿50,000.00</div>
+            </div>
+          </div>
+          <span class="text-[10px] bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-full font-black text-slate-500" id="rank-status-Platinum">฿50,000 req.</span>
+        </div>
+
+        <!-- Diamond Tier Card -->
+        <div class="glass-panel p-4 rounded-2xl flex items-center justify-between border-l-4 border-teal-400 opacity-60" id="rank-card-Diamond">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-teal-400/10 text-teal-500 flex items-center justify-center text-base"><i class="fa-solid fa-gem"></i></div>
+            <div>
+              <div class="text-xs font-black">Diamond</div>
+              <div class="text-[10px] text-slate-500 dark:text-slate-400 font-bold">Ultimate financial discipline badge. ฿100,000+ required.</div>
+            </div>
+          </div>
+          <span class="text-[10px] bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-full font-black text-slate-500" id="rank-status-Diamond">฿100,000 req.</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 6. HISTORY TAB -->
+    <div id="tab-history" class="tab-content hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-black text-slate-900 dark:text-white">Transaction History</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 font-bold">Review, search, or clean previous commits securely.</p>
+        </div>
+        
+        <div class="relative w-full sm:w-64">
+          <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+          </span>
+          <input type="text" id="historySearch" oninput="filterHistory()" placeholder="Search description..." class="w-full pl-9 pr-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/50 rounded-xl text-xs outline-none transition-all font-bold">
+        </div>
+      </div>
+
+      <!-- History Data List Board -->
+      <div class="glass-panel rounded-3xl overflow-hidden shadow-sm border border-slate-200/50 dark:border-slate-800/50">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="bg-slate-100/60 dark:bg-slate-900/40 border-b border-slate-200/50 dark:border-slate-800 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <th class="py-4 px-6">Timestamp</th>
+                <th class="py-4 px-6">Memo Description</th>
+                <th class="py-4 px-6 text-right">Yield</th>
+                <th class="py-4 px-6 text-center">Delete</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody" class="divide-y divide-slate-100 dark:divide-slate-850">
+              <!-- Dyn populated -->
+            </tbody>
+          </table>
+        </div>
+        
+        <div id="historyEmpty" class="hidden text-center py-16">
+          <div class="w-12 h-12 bg-slate-100 dark:bg-slate-800 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-3">
+            <i class="fa-solid fa-receipt text-lg"></i>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 font-black">No committed savings found on this application.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 7. SETTINGS TAB -->
+    <div id="tab-settings" class="tab-content hidden max-w-xl mx-auto space-y-6">
+      <div class="glass-panel p-6 sm:p-8 rounded-3xl space-y-6 border border-slate-200/50 dark:border-slate-800/50 shadow-sm">
+        <div>
+          <h2 class="text-lg font-black text-slate-900 dark:text-white">Settings Center</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 font-bold">Fine-tune system alerts, auto accessibility sights, and force system synchronize parameters.</p>
+        </div>
+
+        <div class="space-y-4 pt-2">
+          <!-- Adaptive sights indicator box -->
+          <div class="flex items-center justify-between p-4 bg-slate-100/50 dark:bg-slate-800/40 rounded-2xl border border-slate-200/60 dark:border-slate-800">
+            <div class="space-y-1">
+              <span class="text-xs font-black block text-slate-800 dark:text-white">Auto Theme Detection</span>
+              <span class="text-[10px] text-slate-500 dark:text-slate-400 block font-bold" id="themeStatusText">Detecting system environment...</span>
+            </div>
+            <div class="w-10 h-10 bg-brand-500/10 text-brand-500 rounded-xl flex items-center justify-center text-sm">
+              <i class="fa-solid fa-circle-half-stroke"></i>
+            </div>
+          </div>
+
+          <!-- Alert bell notification toggler -->
+          <div class="flex items-center justify-between p-4 bg-slate-100/50 dark:bg-slate-800/40 rounded-2xl border border-slate-200/60 dark:border-slate-800">
+            <div class="space-y-1">
+              <span class="text-xs font-black block text-slate-800 dark:text-white">Dynamic Asset Warnings</span>
+              <span class="text-[10px] text-slate-500 dark:text-slate-400 block font-bold">Toggle automated triggers for milestones.</span>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="notiSettingsToggle" checked class="sr-only peer" onchange="toggleAutoNotifications(this)">
+              <div class="w-11 h-6 bg-slate-300 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-500"></div>
+            </label>
+          </div>
+
+          <!-- F5 system reload button -->
+          <button onclick="window.location.reload()" class="w-full py-3 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 rounded-2xl text-xs font-black transition-all flex items-center justify-center gap-2 shadow-sm uppercase tracking-wider">
+            <i class="fa-solid fa-arrow-rotate-right"></i> Sync & Refresh (F5)
+          </button>
+        </div>
+
+        <div class="border-t border-slate-200 dark:border-slate-800 pt-5 text-center">
+          <p class="text-[10px] text-slate-500 dark:text-slate-400 font-extrabold tracking-widest uppercase">FinSave ProX 2026</p>
+          <p class="text-[10px] text-slate-500 dark:text-slate-400 font-bold mt-0.5">Updated Version 2.6.0 • Build 2026.07.07</p>
+          <p class="text-[9px] text-slate-400/80 font-bold mt-1">Google Sheets Real-time Background Connection Activated</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ================= GOAL CREATION MODAL ================= -->
+  <div id="goalModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm hidden">
+    <div class="glass-panel max-w-md w-full rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200/50 dark:border-slate-800/50">
+      <div class="flex justify-between items-center mb-5">
+        <h3 class="text-lg font-black text-slate-900 dark:text-white">New Saving Goal</h3>
+        <button onclick="closeModal('goalModal')" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white transition-all">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="goalForm" onsubmit="handleCreateGoal(event)" class="space-y-4">
+        <div>
+          <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Goal Name / Description</label>
+          <input type="text" id="goalTitle" required placeholder="e.g., Vacation trip, Laptop purchase" class="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-transparent focus:border-brand-500 focus:bg-white dark:focus:bg-slate-900 text-slate-900 dark:text-white rounded-2xl text-sm font-bold outline-none transition-all">
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Target Budget (THB)</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400 font-extrabold">฿</span>
+            <input type="number" step="0.01" id="goalAmount" required min="1" placeholder="0.00" class="w-full pl-9 pr-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-transparent focus:border-brand-500 focus:bg-white dark:focus:bg-slate-900 text-slate-900 dark:text-white rounded-2xl font-black outline-none transition-all">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Target Completion Date</label>
+          <input type="date" id="goalEndDate" required class="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-transparent focus:border-brand-500 focus:bg-white dark:focus:bg-slate-900 text-slate-900 dark:text-white rounded-2xl text-sm font-bold outline-none transition-all">
+        </div>
+
+        <div class="pt-2">
+          <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-black py-3.5 px-6 rounded-2xl shadow-lg shadow-brand-500/20 transition-all uppercase tracking-wider text-xs">
+            Initiate Goal Portfolio
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="hidden md:block w-full py-6 mt-8 border-t border-slate-200/50 dark:border-slate-800/50 text-center text-xs text-slate-500 font-extrabold">
+    <p>© 2026 FinSave ProX 2026 (v2.6.0) • Automated Secure Ledger Environment</p>
+  </footer>
+
+  <!-- ================= JAVASCRIPT LOGIC ================= -->
+  <script>
+    let state = {
+      saves: [],
+      goals: [],
+      fxRate: 34.50,
+      notifications: [],
+      hasUnreadNoti: false,
+      autoNoti: true
+    };
+
+    const GS_ID = "1DxYFSRaKnLvXp4mIyC7mSd75aDF7KWB7aKMNWBxTda8";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyrvBoNKNSwaOgSJ-CHgiH2uZfdaqT7hXKe3r5NmKQUvMxTBcLgJmpCaNDhNLk1xPU/exec";
+
+    // 2026 Official Thai Holidays
+    const THAI_HOLIDAYS_2026 = [
+      "2026-01-01", // New Year's Day
+      "2026-03-03", // Makha Bucha Day
+      "2026-04-06", // Chakri Memorial Day
+      "2026-04-13", // Songkran Festival
+      "2026-04-14", // Songkran Festival
+      "2026-04-15", // Songkran Festival
+      "2026-05-01", // National Labour Day
+      "2026-05-04", // Coronation Day
+      "2026-05-11", // Royal Ploughing Ceremony
+      "2026-05-29", // Visakha Bucha Day
+      "2026-06-03", // H.M. Queen's Birthday
+      "2026-07-27", // Asarnha Bucha Day
+      "2026-07-28", // H.M. King's Birthday / Buddhist Lent
+      "2026-08-12", // H.M. Queen Mother's Birthday (Mother's Day)
+      "2026-10-13", // King Chulalongkorn Memorial Day / King Rama IX Memorial
+      "2026-10-23", // Chulalongkorn Day
+      "2026-12-05", // King Rama IX Birthday (Father's Day)
+      "2026-12-10", // Constitution Day
+      "2026-12-31"  // New Year's Eve
+    ];
+
+    window.onload = function() {
+      detectAndSetTheme();
+      setInterval(detectAndSetTheme, 60000);
+
+      checkSystemLock();
+      setInterval(checkSystemLock, 10000);
+
+      fetchExchangeRate();
+      loadLocalStateData();
+      renderAllViews();
+    };
+
+    // ================= DYNAMIC DIALOG UTILITY (CONFIRMATION REPLACEMENT) =================
+    function showCustomConfirm(title, message, onConfirm) {
+      const modal = document.getElementById("confirmModal");
+      const titleElem = document.getElementById("confirmTitle");
+      const msgElem = document.getElementById("confirmMessage");
+      const cancelBtn = document.getElementById("confirmCancelBtn");
+      const confirmBtn = document.getElementById("confirmConfirmBtn");
+
+      titleElem.innerText = title;
+      msgElem.innerText = message;
+
+      modal.classList.remove("hidden");
+
+      // Reset listener elements to prevent execution leaks
+      const newCancel = cancelBtn.cloneNode(true);
+      const newConfirm = confirmBtn.cloneNode(true);
+      cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
+      confirmBtn.parentNode.replaceChild(newConfirm, confirmBtn);
+
+      newCancel.addEventListener("click", () => {
+        modal.classList.add("hidden");
+      });
+
+      newConfirm.addEventListener("click", () => {
+        modal.classList.add("hidden");
+        onConfirm();
+      });
+    }
+
+    // ================= SYSTEM SECURITY GATEWAY (SAT/SUN & THAI HOLIDAYS & MAINTENANCE LOCK) =================
+    function checkSystemLock() {
+      const now = new Date();
+      const currentDay = now.getDay(); // 0 = Sun, 6 = Sat
+      const formattedDate = now.toISOString().split('T')[0];
+      const currentHour = now.getHours();
+
+      let shouldLock = false;
+      let reasonTitle = "";
+      let reasonMsg = "";
+
+      // Weekend lock logic (Sat & Sun)
+      if (currentDay === 0 || currentDay === 6) {
+        shouldLock = true;
+        reasonTitle = "SYSTEM CLOSED (WEEKEND POLICY)";
+        reasonMsg = "As part of our commitment to financial discipline and healthy rest, FinSave ProX is closed on Saturdays and Sundays. The platform will open automatically on Monday.";
+      }
+      // Official Thai holidays lock
+      else if (THAI_HOLIDAYS_2026.includes(formattedDate)) {
+        shouldLock = true;
+        reasonTitle = "OFFICIAL HOLIDAY LOCK";
+        reasonMsg = "FinSave services are temporarily closed during official Thai national holidays. Take this opportunity to spend quality time with your family.";
+      }
+      // Daily maintenance lockout (23:00 - 00:00)
+      else if (currentHour === 23) {
+        shouldLock = true;
+        reasonTitle = "DAILY MAINTENANCE CLOSED";
+        reasonMsg = "The ledger is performing its scheduled maintenance run to synchronize parameters with our backup systems. Please revisit after 00:00.";
+      }
+
+      const lockScreen = document.getElementById("lockScreen");
+      if (shouldLock) {
+        document.getElementById("lockTitle").innerText = reasonTitle;
+        document.getElementById("lockMessage").innerText = reasonMsg;
+        lockScreen.classList.remove("hidden");
+        addNotification("System Lockout Alert", `⚠️ Service offline: ${reasonTitle}. Ledger actions are protected until business hours.`, true);
+      } else {
+        lockScreen.classList.add("hidden");
+      }
+    }
+
+    // ================= ADAPTIVE LIGHTING SIGHT SYSTEM (AUTO THEME SIGHT SENSOR) =================
+    function detectAndSetTheme() {
+      const now = new Date();
+      const hour = now.getHours();
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isNightTime = hour >= 18 || hour < 6;
+
+      if (systemPrefersDark || isNightTime) {
+        document.documentElement.classList.add('dark');
+        document.getElementById("themeStatusText").innerText = "Sights auto adjusted to Dark Mode (6 PM - 6 AM restriction).";
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.getElementById("themeStatusText").innerText = "Sights auto adjusted to Light Mode.";
+      }
+    }
+
+    // ================= STABLE SIMULATED EXCHANGE RATE =================
+    function fetchExchangeRate() {
+      const randomRate = (Math.random() * (35.10 - 34.20) + 34.20).toFixed(2);
+      state.fxRate = parseFloat(randomRate);
+      document.getElementById("fxRate").innerText = `${state.fxRate} THB`;
+      
+      const netSavings = getNetSavings();
+      const usdElem = document.getElementById("statNetSavingsUSD");
+      if (usdElem) {
+        usdElem.innerText = `($${(netSavings / state.fxRate).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})})`;
+      }
+    }
+
+    // ================= DATA SYNCHRONIZATION AND MEMORY LOADING =================
+    function loadLocalStateData() {
+      const storedSaves = localStorage.getItem("finsave_saves_2026");
+      const storedGoals = localStorage.getItem("finsave_goals_2026");
+      const storedNotis = localStorage.getItem("finsave_notis_2026");
+
+      state.saves = storedSaves ? JSON.parse(storedSaves) : [];
+      state.goals = storedGoals ? JSON.parse(storedGoals) : [];
+      state.notifications = storedNotis ? JSON.parse(storedNotis) : [];
+
+      state.hasUnreadNoti = state.notifications.some(n => !n.read);
+      updateBellBadge();
+
+      syncWithGoogleSheets("READ");
+    }
+
+    function saveLocalStateData() {
+      localStorage.setItem("finsave_saves_2026", JSON.stringify(state.saves));
+      localStorage.setItem("finsave_goals_2026", JSON.stringify(state.goals));
+      localStorage.setItem("finsave_notis_2026", JSON.stringify(state.notifications));
+      
+      renderAllViews();
+    }
+
+    // ================= NAVIGATION SWITCH MECHANICS =================
+    function switchTab(tabId) {
+      const tabs = document.querySelectorAll(".tab-content");
+      tabs.forEach(tab => tab.classList.add("hidden"));
+
+      const targetTab = document.getElementById(`tab-${tabId}`);
+      if (targetTab) targetTab.classList.remove("hidden");
+
+      // Desktop nav button active toggles
+      const desktopBtns = document.querySelectorAll(".nav-btn");
+      desktopBtns.forEach(btn => {
+        if (btn.getAttribute("data-tab") === tabId) {
+          btn.className = "nav-btn px-4 py-2 rounded-xl text-xs font-extrabold transition-all duration-200 text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-500/10";
+        } else {
+          btn.className = "nav-btn px-4 py-2 rounded-xl text-xs font-extrabold transition-all duration-200 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800";
+        }
+      });
+
+      // Mobile nav button active toggles
+      const mobileBtns = document.querySelectorAll(".mobile-nav-btn");
+      mobileBtns.forEach(btn => {
+        if (btn.getAttribute("data-tab") === tabId) {
+          btn.className = "mobile-nav-btn flex flex-col items-center justify-center flex-1 h-full text-brand-600 dark:text-brand-400";
+        } else {
+          btn.className = "mobile-nav-btn flex flex-col items-center justify-center flex-1 h-full text-slate-400 dark:text-slate-400";
+        }
+      });
+
+      document.getElementById("notiDropdown").classList.add("hidden");
+    }
+
+    // ================= TRANSACTION EVENT LOG ACTIONS =================
+    function handleSaveRecord(e) {
+      e.preventDefault();
+      
+      const amount = parseFloat(document.getElementById("saveAmount").value);
+      const memo = document.getElementById("saveMemo").value.trim();
+
+      if (isNaN(amount) || amount <= 0) {
+        showGlobalAlert("Invalid allocation amount. Specify a positive value.", "error");
+        return;
+      }
+
+      const currentHour = new Date().getHours();
+      if (currentHour === 23) {
+        showGlobalAlert("Ledger is closed during 23:00 - 00:00 schedule.", "error");
+        return;
+      }
+
+      const now = new Date();
+      const newRecord = {
+        id: "save_" + Date.now(),
+        amount: amount,
+        memo: memo,
+        timestamp: now.toISOString(),
+        date: now.toISOString().split('T')[0]
+      };
+
+      state.saves.push(newRecord);
+      
+      calculateAndTriggerStreaks();
+      saveLocalStateData();
+
+      document.getElementById("saveAmount").value = "";
+      document.getElementById("saveMemo").value = "";
+
+      addNotification("Savings Committed Successfully", `🎉 Logged ฿${amount.toLocaleString()} on secure blockchain ledgers in real time.`, false);
+      
+      showGlobalAlert("Committed transaction successfully!", "success");
+      switchTab("dashboard");
+
+      syncWithGoogleSheets("WRITE", newRecord);
+    }
+
+    // ================= CLOUD GOOGLE SHEETS ASYNC TRANSMISSIONS =================
+    async function syncWithGoogleSheets(action, payload = null) {
+      if (!APPS_SCRIPT_URL) return;
+
+      try {
+        const reqPayload = {
+          action: action,
+          spreadsheetId: GS_ID,
+          timestamp: new Date().toISOString(),
+          data: payload || { saves: state.saves, goals: state.goals }
+        };
+
+        fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(reqPayload)
+        });
+      } catch (err) {
+        console.warn("Background ledger synch pending local cache validation: ", err);
+      }
+    }
+
+    // ================= SECURE MUTATOR RECORDS =================
+    function deleteRecord(id) {
+      const record = state.saves.find(r => r.id === id);
+      if (!record) return;
+
+      showCustomConfirm(
+        "Remove Savings Commitment",
+        `Are you sure you want to permanently delete the committed transaction of ฿${record.amount.toLocaleString()}?`,
+        () => {
+          state.saves = state.saves.filter(r => r.id !== id);
+          calculateAndTriggerStreaks();
+          saveLocalStateData();
+          addNotification("Ledger Entry Erased", `🗑️ Removed transaction entry for ฿${record.amount.toLocaleString()} from ledger history.`, false);
+          showGlobalAlert("Commitment erased safely.", "success");
+        }
+      );
+    }
+
+    // ================= ASSET PORTFOLIO WISH TARGET EVENTS =================
+    function handleCreateGoal(e) {
+      e.preventDefault();
+
+      const title = document.getElementById("goalTitle").value.trim();
+      const targetAmount = parseFloat(document.getElementById("goalAmount").value);
+      const endDate = document.getElementById("goalEndDate").value;
+
+      if (!title || isNaN(targetAmount) || targetAmount <= 0 || !endDate) {
+        showGlobalAlert("Form values invalid. Complete all fields.", "error");
+        return;
+      }
+
+      const now = new Date();
+      const newGoal = {
+        id: "goal_" + Date.now(),
+        title: title,
+        targetAmount: targetAmount,
+        createdDate: now.toISOString().split('T')[0],
+        endDate: endDate
+      };
+
+      state.goals.push(newGoal);
+      saveLocalStateData();
+
+      document.getElementById("goalTitle").value = "";
+      document.getElementById("goalAmount").value = "";
+      document.getElementById("goalEndDate").value = "";
+
+      closeModal("goalModal");
+      addNotification("Savings Goal Initiated", `🎯 Created target '${title}' with goal allocation of ฿${targetAmount.toLocaleString()}.`, false);
+      showGlobalAlert("Milestone registered successfully!", "success");
+    }
+
+    function deleteGoal(id) {
+      const goal = state.goals.find(g => g.id === id);
+      if (!goal) return;
+
+      showCustomConfirm(
+        "Dissolve Saving Goal",
+        `Are you sure you want to completely dissolve the '${goal.title}' financial milestone portfolio?`,
+        () => {
+          state.goals = state.goals.filter(g => g.id !== id);
+          saveLocalStateData();
+          addNotification("Milestone dissolved", `🗑️ Terminated milestone allocation trajectory for '${goal.title}'.`, false);
+          showGlobalAlert("Milestone portfolio dissolved.", "success");
+        }
+      );
+    }
+
+    // ================= CENTRAL ALERTS HUB (AUTOMATION DISPATCHER) =================
+    function addNotification(title, msg, isSystemWarn = false) {
+      const isDuplicate = state.notifications.some(n => n.message === msg);
+      if (isDuplicate) return;
+
+      const newNoti = {
+        id: "noti_" + Date.now() + Math.random().toString(36).substr(2, 4),
+        title: title,
+        message: msg,
+        time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+        read: false,
+        system: isSystemWarn
+      };
+
+      state.notifications.unshift(newNoti);
+      state.hasUnreadNoti = true;
+      updateBellBadge();
+      renderNotifications();
+    }
+
+    function toggleNotifications() {
+      const dropdown = document.getElementById("notiDropdown");
+      dropdown.classList.toggle("hidden");
+      
+      if (!dropdown.classList.contains("hidden")) {
+        state.notifications.forEach(n => n.read = true);
+        state.hasUnreadNoti = false;
+        updateBellBadge();
+        saveLocalStateData();
+      }
+    }
+
+    function updateBellBadge() {
+      const dot = document.getElementById("bellDot");
+      if (state.hasUnreadNoti) {
+        dot.classList.remove("hidden");
+      } else {
+        dot.classList.add("hidden");
+      }
+    }
+
+    function clearNotifications() {
+      state.notifications = [];
+      state.hasUnreadNoti = false;
+      updateBellBadge();
+      renderNotifications();
+      saveLocalStateData();
+    }
+
+    function renderNotifications() {
+      const list = document.getElementById("notiList");
+      if (state.notifications.length === 0) {
+        list.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">No new alerts</p>`;
+        return;
+      }
+
+      list.innerHTML = state.notifications.map(n => `
+        <div class="p-2.5 text-xs rounded-lg ${n.system ? 'bg-red-500/5' : 'hover:bg-slate-50 dark:hover:bg-slate-800/40'} transition-colors">
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-extrabold ${n.system ? 'text-red-500' : 'text-slate-700 dark:text-slate-200'}">${n.title}</span>
+            <span class="text-[9px] text-slate-400">${n.time}</span>
+          </div>
+          <p class="text-[11px] text-slate-600 dark:text-slate-350 leading-relaxed font-bold">${n.message}</p>
+        </div>
+      `).join('');
+    }
+
+    function toggleAutoNotifications(checkbox) {
+      state.autoNoti = checkbox.checked;
+      showGlobalAlert(`Alert preferences updated successfully.`, "success");
+    }
+
+    // ================= COMPILING INTERACTIVE DATA VISUALS =================
+    function renderSavingsHeatmap() {
+      const container = document.getElementById("heatmapGrid");
+      if (!container) return;
+      container.innerHTML = "";
+
+      const totalWeeks = 12;
+      const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const today = new Date();
+
+      const savingMap = {};
+      state.saves.forEach(s => {
+        savingMap[s.date] = (savingMap[s.date] || 0) + s.amount;
+      });
+
+      let cellsHtml = "";
+      for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
+        cellsHtml += `<div class="text-[9px] text-slate-400 font-extrabold h-4 flex items-center pr-1.5">${daysOfWeek[dayIndex]}</div>`;
+        
+        for (let week = totalWeeks - 1; week >= 0; week--) {
+          const targetDay = new Date(today);
+          targetDay.setDate(today.getDate() - (week * 7) - (today.getDay() - dayIndex));
+          const dateStr = targetDay.toISOString().split('T')[0];
+          
+          const dailyAmount = savingMap[dateStr] || 0;
+          let colorClass = "bg-slate-200 dark:bg-slate-800";
+
+          if (dailyAmount > 0) {
+            // High Contrast Spectrum: Red (low) -> Yellow (med) -> Emerald (high)
+            if (dailyAmount < 200) colorClass = "bg-red-400 dark:bg-red-500";
+            else if (dailyAmount < 1000) colorClass = "bg-amber-400 dark:bg-amber-500";
+            else colorClass = "bg-emerald-500 dark:bg-emerald-600";
+          }
+
+          cellsHtml += `
+            <div class="w-4 h-4 rounded-sm ${colorClass} transition-colors relative group" title="${dateStr}: Logged ฿${dailyAmount.toFixed(2)}">
+              <span class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[8px] rounded px-1.5 py-0.5 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 mb-1 shadow-md">
+                ฿${dailyAmount.toFixed(0)}
+              </span>
+            </div>
+          `;
+        }
+      }
+
+      container.innerHTML = cellsHtml;
+    }
+
+    function renderSavingsChart() {
+      const chartPath = document.getElementById("chartPath");
+      const chartAreaPath = document.getElementById("chartAreaPath");
+      const noDataMsg = document.getElementById("chartNoData");
+
+      if (!chartPath || !chartAreaPath || !noDataMsg) return;
+
+      if (state.saves.length === 0) {
+        chartPath.setAttribute("d", "");
+        chartAreaPath.setAttribute("d", "");
+        noDataMsg.classList.remove("hidden");
+        return;
+      }
+
+      noDataMsg.classList.add("hidden");
+
+      const sorted = [...state.saves].sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+      let cumulative = 0;
+      const points = sorted.map(s => {
+        cumulative += s.amount;
+        return cumulative;
+      });
+
+      const maxVal = Math.max(...points) || 100;
+      const minVal = 0;
+      const range = maxVal - minVal;
+
+      const totalPoints = points.length;
+      const stepX = 500 / (totalPoints > 1 ? totalPoints - 1 : 1);
+
+      let d = "";
+      let areaD = "M 0 200 ";
+
+      points.forEach((val, index) => {
+        const x = (index * stepX).toFixed(1);
+        const y = (200 - ((val - minVal) / range) * 160 - 20).toFixed(1);
+
+        if (index === 0) {
+          d += `M ${x} ${y} `;
+          areaD += `L ${x} ${y} `;
+        } else {
+          d += `L ${x} ${y} `;
+          areaD += `L ${x} ${y} `;
+        }
+      });
+
+      areaD += `L 500 200 Z`;
+
+      chartPath.setAttribute("d", d);
+      chartAreaPath.setAttribute("d", areaD);
+    }
+
+    // ================= STREAK SYSTEM PLUS (STRICT VALID DATE CHECK) =================
+    function calculateAndTriggerStreaks() {
+      if (state.saves.length === 0) return 0;
+
+      const sortedDates = [...new Set(state.saves.map(s => s.date))].sort().reverse();
+      if (sortedDates.length === 0) return 0;
+
+      let streak = 0;
+      const today = new Date().toISOString().split('T')[0];
+      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+
+      if (sortedDates[0] !== today && sortedDates[0] !== yesterday) {
+        return 0;
+      }
+
+      streak = 1;
+      for (let i = 0; i < sortedDates.length - 1; i++) {
+        const d1 = new Date(sortedDates[i]);
+        const d2 = new Date(sortedDates[i+1]);
+        const diffTime = Math.abs(d1 - d2);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 1) {
+          streak++;
+        } else if (diffDays > 1) {
+          break;
+        }
+      }
+
+      return streak;
+    }
+
+    function getNetSavings() {
+      return state.saves.reduce((sum, r) => sum + r.amount, 0);
+    }
+
+    function getSaverRank(totalSavings) {
+      if (totalSavings >= 100000) return "Diamond";
+      if (totalSavings >= 50000) return "Platinum";
+      if (totalSavings >= 10000) return "Gold";
+      if (totalSavings >= 2000) return "Silver";
+      if (totalSavings >= 500) return "Bronze";
+      return "Beginner";
+    }
+
+    // ================= AI ANALYTICS INTEL PREDICTION ENGINE =================
+    function runAIEngine() {
+      const net = getNetSavings();
+      const count = state.saves.length;
+      const streak = calculateAndTriggerStreaks();
+
+      let healthScore = 20;
+      if (count > 0) healthScore += 15;
+      if (streak > 2) healthScore += 20;
+      if (streak > 5) healthScore += 25;
+      if (net > 2000) healthScore += 15;
+      if (net > 10000) healthScore += 15;
+      healthScore = Math.min(healthScore, 100);
+
+      let avgDaily = 0;
+      if (count > 0) {
+        const sorted = [...state.saves].sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+        const diffDays = Math.max(1, Math.ceil((new Date() - new Date(sorted[0].timestamp)) / 86400000));
+        avgDaily = net / diffDays;
+      }
+
+      const scoreSpan = document.getElementById("aiHealthScore");
+      if (scoreSpan) {
+        scoreSpan.innerHTML = `
+          <span class="text-indigo-600 dark:text-indigo-400 font-black">${healthScore}</span>
+          <span class="text-xs text-slate-400 font-bold">/ 100</span>
+        `;
+      }
+
+      let healthDesc = "Initiating savings patterns";
+      if (healthScore > 80) healthDesc = "Iron discipline. Excellent!";
+      else if (healthScore > 50) healthDesc = "Steady consistency metrics.";
+      else if (healthScore > 30) healthDesc = "Undergoing healthy development.";
+      
+      const healthTextElem = document.getElementById("aiHealthText");
+      if (healthTextElem) {
+        healthTextElem.innerText = `(${healthDesc})`;
+      }
+
+      const tips = [
+        "Commit minor values daily to establish robust muscle memory patterns.",
+        "Allocate at least 30% of total yields into emergency funds instantly.",
+        "Ensure persistent streak integrity to keep analytical forecasting highly precise.",
+        "Your current savings acceleration score exceeds regional parameters by 12.8%."
+      ];
+      const selectedTip = tips[Math.floor((healthScore + count) % tips.length)];
+
+      const dashAdviceElem = document.getElementById("aiDashboardAdvice");
+      if (dashAdviceElem) {
+        dashAdviceElem.innerHTML = `"${selectedTip}"`;
+      }
+
+      const avgDailyElem = document.getElementById("aiAvgDaily");
+      if (avgDailyElem) {
+        avgDailyElem.innerText = `฿${avgDaily.toFixed(2)} / Day`;
+      }
+
+      const adviceGrowthElem = document.getElementById("aiAdviceGrowth");
+      if (adviceGrowthElem) {
+        adviceGrowthElem.innerText = `Portfolio currently registers ฿${net.toLocaleString()} net assets compiled over ${count} successfully committed ledger logs.`;
+      }
+
+      let goalForecast = "No active milestone allocation targets identified.";
+      if (state.goals.length > 0) {
+        const nextActiveGoal = state.goals[0];
+        const needed = nextActiveGoal.targetAmount - net;
+        if (needed <= 0) {
+          goalForecast = `🎉 Goal reached! Cumulative balance covers budget targets for '${nextActiveGoal.title}' completely.`;
+        } else if (avgDaily > 0) {
+          const daysToReach = Math.ceil(needed / avgDaily);
+          goalForecast = `At current speed, target budget for '${nextActiveGoal.title}' will be accomplished in ${daysToReach} consecutive days.`;
+        } else {
+          goalForecast = `Commit a deposit record to generate accurate target estimation for '${nextActiveGoal.title}'.`;
+        }
+      }
+
+      const adviceTargetElem = document.getElementById("aiAdviceTarget");
+      if (adviceTargetElem) {
+        adviceTargetElem.innerText = goalForecast;
+      }
+
+      let strategyText = "Establish a 3-day continuous savings deposit streak to enable machine learning prediction models.";
+      if (streak > 0) {
+        strategyText = `🔥 Active Streak: ${streak} continuous days. Maintain progress trajectories to reach next tier.`;
+      }
+      
+      const adviceElem = document.getElementById("aiAdviceAdvice");
+      if (adviceElem) {
+        adviceElem.innerText = strategyText;
+      }
+    }
+
+    // ================= COMPRESSING AND RENDERING VISUAL VIEWS =================
+    function renderAllViews() {
+      const netSavings = getNetSavings();
+      const currentStreak = calculateAndTriggerStreaks();
+      const rank = getSaverRank(netSavings);
+
+      document.getElementById("statNetSavings").innerText = `฿${netSavings.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+      document.getElementById("statNetSavingsUSD").innerText = `($${(netSavings / state.fxRate).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})})`;
+      document.getElementById("statStreak").innerText = `${currentStreak} Days`;
+      document.getElementById("statRank").innerText = rank;
+      document.getElementById("rankBadgeText").innerText = rank;
+      document.getElementById("statEmergencyFund").innerText = `฿${(netSavings * 0.3).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+      
+      document.getElementById("statGoalsCount").innerText = state.goals.length;
+      const successCount = state.goals.filter(g => netSavings >= g.targetAmount).length;
+      document.getElementById("statGoalsSuccess").innerText = successCount;
+      document.getElementById("statSavesCount").innerText = state.saves.length;
+
+      let rankPct = 10;
+      if (rank === "Bronze") rankPct = 25;
+      else if (rank === "Silver") rankPct = 45;
+      else if (rank === "Gold") rankPct = 65;
+      else if (rank === "Platinum") rankPct = 85;
+      else if (rank === "Diamond") rankPct = 100;
+      document.getElementById("statRankProgress").style.width = `${rankPct}%`;
+
+      const ranksList = ["Beginner", "Bronze", "Silver", "Gold", "Platinum", "Diamond"];
+      ranksList.forEach(r => {
+        const card = document.getElementById(`rank-card-${r}`);
+        const status = document.getElementById(`rank-status-${r}`);
+        if (!card) return;
+
+        if (r === rank) {
+          card.className = "glass-panel p-4 rounded-2xl flex items-center justify-between border-l-4 border-emerald-500 scale-[1.01] shadow-md transition-all font-bold";
+          if (status) status.innerHTML = `<span class="text-emerald-500 font-black"><i class="fa-solid fa-circle-check"></i> Current Tier</span>`;
+        } else {
+          card.className = "glass-panel p-4 rounded-2xl flex items-center justify-between border-l-4 border-slate-400/40 opacity-60 transition-all font-bold";
+          if (status && ranksList.indexOf(r) < ranksList.indexOf(rank)) {
+            status.innerHTML = `<span class="text-indigo-500 font-black"><i class="fa-solid fa-check"></i> Accomplished</span>`;
+          }
+        }
+      });
+
+      renderGoalsGrid(netSavings);
+      renderHistoryTable();
+      renderSavingsHeatmap();
+      renderSavingsChart();
+
+      runAIEngine();
+    }
+
+    function renderGoalsGrid(netSavings) {
+      const grid = document.getElementById("goalsGrid");
+      if (!grid) return;
+      grid.innerHTML = "";
+
+      if (state.goals.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full text-center py-12 glass-panel rounded-3xl p-6">
+            <div class="w-12 h-12 bg-slate-100 dark:bg-slate-800 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-3">
+              <i class="fa-solid fa-bullseye"></i>
+            </div>
+            <p class="text-xs text-slate-400 font-bold">No active milestones configured.</p>
+          </div>
+        `;
+        return;
+      }
+
+      state.goals.forEach(goal => {
+        const percent = Math.min(100, Math.max(0, (netSavings / goal.targetAmount) * 100));
+        const needed = Math.max(0, goal.targetAmount - netSavings);
+
+        grid.innerHTML += `
+          <div class="glass-panel p-6 rounded-3xl shadow-sm hover:scale-[1.01] transition-transform relative overflow-hidden flex flex-col justify-between border border-slate-200/50 dark:border-slate-800/50">
+            <div>
+              <div class="flex items-start justify-between gap-3 mb-2">
+                <h4 class="font-extrabold text-sm text-slate-900 dark:text-white leading-tight">${goal.title}</h4>
+                <button onclick="deleteGoal('${goal.id}')" class="text-slate-400 hover:text-red-500 transition-colors p-1"><i class="fa-solid fa-trash-can text-xs"></i></button>
+              </div>
+
+              <div class="flex justify-between items-baseline mt-4 mb-2">
+                <span class="text-xs font-bold text-slate-500 dark:text-slate-400">Yield Allocation</span>
+                <span class="text-base font-black text-brand-600 dark:text-brand-400">฿${netSavings.toLocaleString()} / ฿${goal.targetAmount.toLocaleString()}</span>
+              </div>
+
+              <div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden mt-3">
+                <div class="bg-brand-500 h-full rounded-full transition-all duration-300" style="width: ${percent}%"></div>
+              </div>
+
+              <div class="flex justify-between text-[10px] text-slate-500 dark:text-slate-400 mt-2 font-black">
+                <span>${percent.toFixed(1)}% Achieved</span>
+                <span>Due Date: ${goal.endDate}</span>
+              </div>
+            </div>
+
+            <div class="mt-5 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs font-black">
+              <span class="text-[11px] text-slate-500 dark:text-slate-400">
+                ${needed > 0 ? `Needs ฿${needed.toLocaleString()}` : `🎉 Completed Successfully!`}
+              </span>
+              <span class="px-2.5 py-1 rounded-md text-[9px] font-black uppercase ${percent >= 100 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'}">
+                ${percent >= 100 ? 'SUCCESS' : 'ACTIVE'}
+              </span>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function renderHistoryTable() {
+      const tbody = document.getElementById("historyTableBody");
+      const empty = document.getElementById("historyEmpty");
+      
+      if (!tbody || !empty) return;
+      tbody.innerHTML = "";
+
+      if (state.saves.length === 0) {
+        empty.classList.remove("hidden");
+        return;
+      }
+
+      empty.classList.add("hidden");
+
+      const sorted = [...state.saves].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+      sorted.forEach(record => {
+        const dateObj = new Date(record.timestamp);
+        const formattedTime = dateObj.toLocaleDateString('en-US', { year: '2-digit', month: 'short', day: 'numeric' }) + ' ' + dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+        tbody.innerHTML += `
+          <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-900/10 transition-colors">
+            <td class="py-3.5 px-6 font-extrabold text-slate-500 dark:text-slate-400">${formattedTime}</td>
+            <td class="py-3.5 px-6 text-slate-900 dark:text-white font-extrabold">${record.memo}</td>
+            <td class="py-3.5 px-6 text-right font-black text-brand-600 dark:text-brand-400">฿${record.amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+            <td class="py-3.5 px-6 text-center">
+              <button onclick="deleteRecord('${record.id}')" class="text-slate-400 hover:text-red-500 p-1.5 rounded-lg hover:bg-red-500/5 transition-all"><i class="fa-solid fa-trash-can"></i></button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function filterHistory() {
+      const query = document.getElementById("historySearch").value.toLowerCase().trim();
+      const rows = document.querySelectorAll("#historyTableBody tr");
+      let foundCount = 0;
+
+      rows.forEach(row => {
+        const memoCell = row.cells[1].textContent.toLowerCase();
+        if (memoCell.includes(query)) {
+          row.classList.remove("hidden");
+          foundCount++;
+        } else {
+          row.classList.add("hidden");
+        }
+      });
+
+      const empty = document.getElementById("historyEmpty");
+      if (foundCount === 0 && rows.length > 0) {
+        empty.classList.remove("hidden");
+      } else {
+        empty.classList.add("hidden");
+      }
+    }
+
+    // ================= DIALOG CONTROL ROUTINES =================
+    function openModal(id) {
+      document.getElementById(id).classList.remove("hidden");
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add("hidden");
+    }
+
+    // ================= TOAST SYSTEM (HIGH CONTRAST NOTIFICATIONS) =================
+    function showGlobalAlert(message, type = "success") {
+      const alertDiv = document.createElement("div");
+      alertDiv.className = `fixed bottom-20 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-2xl shadow-xl flex items-center gap-2.5 text-xs font-black transition-all duration-300 opacity-0 translate-y-4 ${type === 'success' ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 border border-white/10' : 'bg-red-500 text-white'}`;
+      
+      const icon = type === "success" ? `<i class="fa-solid fa-circle-check text-brand-500"></i>` : `<i class="fa-solid fa-triangle-exclamation"></i>`;
+      alertDiv.innerHTML = `${icon} <span>${message}</span>`;
+      
+      document.body.appendChild(alertDiv);
+
+      setTimeout(() => {
+        alertDiv.classList.remove("opacity-0", "translate-y-4");
+      }, 50);
+
+      setTimeout(() => {
+        alertDiv.classList.add("opacity-0", "translate-y-4");
+        setTimeout(() => alertDiv.remove(), 300);
+      }, 2500);
+    }
+  </script>
+</body>
+</html>
