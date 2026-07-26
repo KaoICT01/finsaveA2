@@ -2,26 +2,14 @@
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FinSave Pro 2026 - Enterprise Financial Management v5.2.0</title>
-    
-    <!-- PWA Manifest Dynamic Meta -->
-    <meta name="theme-color" content="#0f172a">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="manifest" id="manifest-placeholder">
-
-    <!-- Fonts & Icons -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinSave Pro 2026 - Enterprise Savings Management</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -31,659 +19,668 @@
                         brand: {
                             50: '#f0fdf4',
                             100: '#dcfce7',
+                            400: '#4ade80',
                             500: '#22c55e',
                             600: '#16a34a',
                             700: '#15803d',
                             900: '#14532d',
                         },
-                        darkbg: {
-                            900: '#0b0f17',
-                            800: '#111827',
-                            700: '#1f2937',
-                            600: '#374151'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'Sarabun', 'sans-serif'],
+                        darkbg: '#0f172a',
+                        darkcard: '#1e293b',
+                        darkborder: '#334155'
                     }
                 }
             }
         }
     </script>
-
     <style>
-        /* Custom Glassmorphism & Enterprise UI Effects */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
         body {
-            font-family: 'Plus Jakarta Sans', 'Sarabun', sans-serif;
-            background-color: #0b0f17;
-            color: #f3f4f6;
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0f19;
+            color: #f1f5f9;
+            min-height: 100vh;
             overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent;
         }
 
-        .glass-card {
-            background: rgba(17, 24, 39, 0.7);
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
         }
 
-        .glass-card-light {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .nav-item-active {
-            background: rgba(34, 197, 94, 0.15);
             color: #4ade80;
-            border-bottom: 2px solid #22c55e;
+            border-bottom: 2px solid #4ade80;
+            background: rgba(74, 222, 128, 0.05);
         }
 
-        /* Custom scrollbar */
+        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #0b0f17;
+            background: #0f172a;
         }
         ::-webkit-scrollbar-thumb {
-            background: #374151;
-            border-radius: 9999px;
+            background: #334155;
+            border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #4b5563;
+            background: #475569;
         }
 
-        /* Pulse animation for notifications */
-        .badge-pulse {
-            animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.95) infinite;
+        /* Heatmap level styles */
+        .heatmap-0 { background-color: #1e293b; border: 1px solid #334155; }
+        .heatmap-1 { background-color: #991b1b; } /* Low saving */
+        .heatmap-2 { background-color: #d97706; }
+        .heatmap-3 { background-color: #15803d; }
+        .heatmap-4 { background-color: #22c55e; box-shadow: 0 0 8px rgba(34,197,94,0.4); } /* High saving */
+
+        .pulse-red-dot {
+            animation: pulse-dot 2s infinite;
         }
-        @keyframes pulse-ring {
+
+        @keyframes pulse-dot {
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
             70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
 
-        /* Heatmap Grid */
-        .heatmap-grid {
-            display: grid;
-            grid-template-columns: repeat(53, minmax(0, 1fr));
-            gap: 3px;
+        .auto-contrast {
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col bg-darkbg-900 text-gray-100 antialiased selection:bg-brand-500 selection:text-white">
+<body class="flex flex-col min-h-screen text-slate-100 antialiased selection:bg-brand-500 selection:text-white">
 
-    <!-- TOP ENTERPRISE NAVIGATION BAR -->
-    <header class="sticky top-0 z-40 w-full glass-card border-b border-gray-800/80 bg-darkbg-900/90 backdrop-blur-md">
+    <!-- Top System Alert Bar (Dynamic) -->
+    <div id="system-status-bar" class="hidden bg-amber-600/90 text-white text-xs font-semibold px-4 py-2 text-center transition-all duration-300">
+        <i class="fa-solid fa-triangle-exclamation mr-2"></i>
+        <span id="system-status-text">System status notice</span>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-40 glass-nav">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 
                 <!-- Logo & Brand -->
-                <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('dashboard')">
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center shadow-lg shadow-brand-500/20">
-                        <i class="fa-solid font-bold text-white text-xl fa-vault"></i>
+                        <i class="fa-solid fa-chart-line text-white text-lg"></i>
                     </div>
                     <div>
-                        <div class="flex items-center gap-2">
-                            <span class="font-extrabold text-lg tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-emerald-400">FinSave Pro</span>
-                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-400 border border-brand-500/30">v5.2.0</span>
+                        <div class="flex items-center space-x-2">
+                            <span class="font-bold text-lg tracking-tight text-white">FinSave <span class="text-brand-400">Pro</span></span>
+                            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-400 border border-brand-500/30">v5.4.0</span>
                         </div>
-                        <p class="text-[11px] text-gray-400 tracking-tight hidden sm:block">Enterprise Smart Savings Intelligence</p>
+                        <p class="text-[10px] text-slate-400 font-medium">Enterprise Wealth Analytics</p>
                     </div>
                 </div>
 
-                <!-- Horizontal Desktop Navigation (English Labels Required) -->
-                <nav class="hidden md:flex items-center space-x-1 lg:space-x-2 text-sm font-medium">
-                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-3 py-2 rounded-lg transition-all flex items-center gap-2 text-gray-300 hover:text-white hover:bg-gray-800/60">
-                        <i class="fa-solid fa-chart-line text-xs"></i> Dashboard
+                <!-- Horizontal Desktop Navigation (English Only, Icons Standard) -->
+                <nav class="hidden md:flex space-x-1 h-full items-center">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-3 py-2 text-xs font-medium rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-gauge-high"></i>
+                        <span data-i18n="nav.dashboard">Dashboard</span>
                     </button>
-                    <button onclick="switchTab('savings')" id="nav-savings" class="nav-btn px-3 py-2 rounded-lg transition-all flex items-center gap-2 text-gray-300 hover:text-white hover:bg-gray-800/60">
-                        <i class="fa-solid fa-piggy-bank text-xs"></i> Savings
+                    <button onclick="switchTab('savings')" id="nav-savings" class="nav-btn px-3 py-2 text-xs font-medium rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-wallet"></i>
+                        <span data-i18n="nav.savings">Savings</span>
                     </button>
-                    <button onclick="switchTab('goals')" id="nav-goals" class="nav-btn px-3 py-2 rounded-lg transition-all flex items-center gap-2 text-gray-300 hover:text-white hover:bg-gray-800/60">
-                        <i class="fa-solid fa-bullseye text-xs"></i> Goals
+                    <button onclick="switchTab('goals')" id="nav-goals" class="nav-btn px-3 py-2 text-xs font-medium rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-bullseye"></i>
+                        <span data-i18n="nav.goals">Goals</span>
                     </button>
-                    <button onclick="switchTab('analytics')" id="nav-analytics" class="nav-btn px-3 py-2 rounded-lg transition-all flex items-center gap-2 text-gray-300 hover:text-white hover:bg-gray-800/60">
-                        <i class="fa-solid fa-chart-pie text-xs"></i> Analytics
+                    <button onclick="switchTab('analytics')" id="nav-analytics" class="nav-btn px-3 py-2 text-xs font-medium rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <span data-i18n="nav.analytics">Analytics</span>
                     </button>
-                    <button onclick="switchTab('saverlevel')" id="nav-saverlevel" class="nav-btn px-3 py-2 rounded-lg transition-all flex items-center gap-2 text-gray-300 hover:text-white hover:bg-gray-800/60">
-                        <i class="fa-solid fa-award text-xs"></i> Saver Level
+                    <button onclick="switchTab('saver-level')" id="nav-saver-level" class="nav-btn px-3 py-2 text-xs font-medium rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-trophy"></i>
+                        <span data-i18n="nav.saverLevel">Saver Level</span>
                     </button>
-                    <button onclick="switchTab('history')" id="nav-history" class="nav-btn px-3 py-2 rounded-lg transition-all flex items-center gap-2 text-gray-300 hover:text-white hover:bg-gray-800/60">
-                        <i class="fa-solid fa-clock-rotate-left text-xs"></i> History
+                    <button onclick="switchTab('history')" id="nav-history" class="nav-btn px-3 py-2 text-xs font-medium rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <span data-i18n="nav.history">History</span>
                     </button>
-                    <button onclick="switchTab('settings')" id="nav-settings" class="nav-btn px-3 py-2 rounded-lg transition-all flex items-center gap-2 text-gray-300 hover:text-white hover:bg-gray-800/60">
-                        <i class="fa-solid fa-gear text-xs"></i> Settings
+                    <button onclick="switchTab('settings')" id="nav-settings" class="nav-btn px-3 py-2 text-xs font-medium rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-gear"></i>
+                        <span data-i18n="nav.settings">Settings</span>
                     </button>
                 </nav>
 
                 <!-- Right Utility Bar -->
-                <div class="flex items-center gap-3">
+                <div class="flex items-center space-x-3">
                     
-                    <!-- Currency Selector -->
+                    <!-- Currency Selector Dropdown -->
                     <div class="relative">
-                        <select id="currency-select" onchange="changeCurrency(this.value)" class="bg-gray-800/80 border border-gray-700 text-xs text-gray-200 py-1.5 px-2.5 rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-500 cursor-pointer">
-                            <option value="THB">🇹🇭 THB (฿)</option>
-                            <option value="USD">🇺🇸 USD ($)</option>
-                            <option value="EUR">🇪🇺 EUR (€)</option>
-                            <option value="JPY">🇯🇵 JPY (¥)</option>
+                        <select id="currency-select" onchange="changeCurrency(this.value)" class="bg-slate-800/80 border border-slate-700 text-xs text-slate-200 rounded-lg px-2.5 py-1.5 focus:ring-1 focus:ring-brand-500 focus:outline-none cursor-pointer">
+                            <option value="THB">THB (฿)</option>
+                            <option value="USD">USD ($)</option>
+                            <option value="EUR">EUR (€)</option>
+                            <option value="JPY">JPY (¥)</option>
+                            <option value="GBP">GBP (£)</option>
                         </select>
                     </div>
 
-                    <!-- Notification Bell Button -->
-                    <button onclick="toggleNotificationDrawer()" class="relative p-2 rounded-lg bg-gray-800/60 hover:bg-gray-700/80 text-gray-300 hover:text-white transition-all">
-                        <i class="fa-regular fa-bell text-lg"></i>
-                        <span id="notif-red-dot" class="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full badge-pulse hidden"></span>
-                    </button>
+                    <!-- Notification Center Bell -->
+                    <div class="relative">
+                        <button onclick="toggleNotificationCenter()" class="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white transition relative">
+                            <i class="fa-regular fa-bell text-sm"></i>
+                            <span id="noti-badge" class="hidden absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full pulse-red-dot"></span>
+                        </button>
 
-                    <!-- Refresh Sync Button -->
-                    <button onclick="syncDataFromSheets()" title="Sync Google Sheets" class="p-2 rounded-lg bg-gray-800/60 hover:bg-gray-700/80 text-gray-300 hover:text-white transition-all">
-                        <i id="sync-icon" class="fa-solid fa-rotate text-sm"></i>
-                    </button>
+                        <!-- Notification Dropdown Menu -->
+                        <div id="notification-dropdown" class="hidden absolute right-0 mt-3 w-80 glass-panel rounded-xl shadow-2xl p-4 z-50 border border-slate-700">
+                            <div class="flex items-center justify-between pb-3 border-b border-slate-700/70">
+                                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+                                    <i class="fa-solid fa-bell text-brand-400"></i> <span data-i18n="noti.centerTitle">Notification Center</span>
+                                </h4>
+                                <button onclick="clearNotifications()" class="text-[10px] text-slate-400 hover:text-red-400 transition" data-i18n="noti.clear">Clear All</button>
+                            </div>
+                            <div id="noti-list" class="mt-3 space-y-2 max-h-64 overflow-y-auto pr-1 text-xs">
+                                <!-- Notifications dynamically inserted -->
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Mobile Menu Button -->
-                    <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-lg bg-gray-800/60 text-gray-300 hover:text-white">
-                        <i class="fa-solid fa-bars text-lg"></i>
+                    <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white">
+                        <i class="fa-solid fa-bars"></i>
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- Mobile Navigation Menu Dropdown -->
-        <div id="mobile-menu" class="hidden md:hidden border-t border-gray-800 bg-darkbg-800/95 px-4 pt-2 pb-4 space-y-1">
-            <button onclick="switchTab('dashboard'); toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-700 flex items-center gap-3"><i class="fa-solid fa-chart-line w-5"></i> Dashboard</button>
-            <button onclick="switchTab('savings'); toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-700 flex items-center gap-3"><i class="fa-solid fa-piggy-bank w-5"></i> Savings</button>
-            <button onclick="switchTab('goals'); toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-700 flex items-center gap-3"><i class="fa-solid fa-bullseye w-5"></i> Goals</button>
-            <button onclick="switchTab('analytics'); toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-700 flex items-center gap-3"><i class="fa-solid fa-chart-pie w-5"></i> Analytics</button>
-            <button onclick="switchTab('saverlevel'); toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-700 flex items-center gap-3"><i class="fa-solid fa-award w-5"></i> Saver Level</button>
-            <button onclick="switchTab('history'); toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-700 flex items-center gap-3"><i class="fa-solid fa-clock-rotate-left w-5"></i> History</button>
-            <button onclick="switchTab('settings'); toggleMobileMenu()" class="w-full text-left px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-700 flex items-center gap-3"><i class="fa-solid fa-gear w-5"></i> Settings</button>
+        <div id="mobile-menu" class="hidden md:hidden border-t border-slate-800 bg-slate-900/95 px-4 pt-2 pb-4 space-y-1">
+            <button onclick="switchTab('dashboard'); toggleMobileMenu()" class="w-full text-left px-3 py-2 text-sm rounded-lg text-slate-300 hover:bg-slate-800 flex items-center space-x-3">
+                <i class="fa-solid fa-gauge-high w-5 text-brand-400"></i><span data-i18n="nav.dashboard">Dashboard</span>
+            </button>
+            <button onclick="switchTab('savings'); toggleMobileMenu()" class="w-full text-left px-3 py-2 text-sm rounded-lg text-slate-300 hover:bg-slate-800 flex items-center space-x-3">
+                <i class="fa-solid fa-wallet w-5 text-brand-400"></i><span data-i18n="nav.savings">Savings</span>
+            </button>
+            <button onclick="switchTab('goals'); toggleMobileMenu()" class="w-full text-left px-3 py-2 text-sm rounded-lg text-slate-300 hover:bg-slate-800 flex items-center space-x-3">
+                <i class="fa-solid fa-bullseye w-5 text-brand-400"></i><span data-i18n="nav.goals">Goals</span>
+            </button>
+            <button onclick="switchTab('analytics'); toggleMobileMenu()" class="w-full text-left px-3 py-2 text-sm rounded-lg text-slate-300 hover:bg-slate-800 flex items-center space-x-3">
+                <i class="fa-solid fa-chart-pie w-5 text-brand-400"></i><span data-i18n="nav.analytics">Analytics</span>
+            </button>
+            <button onclick="switchTab('saver-level'); toggleMobileMenu()" class="w-full text-left px-3 py-2 text-sm rounded-lg text-slate-300 hover:bg-slate-800 flex items-center space-x-3">
+                <i class="fa-solid fa-trophy w-5 text-brand-400"></i><span data-i18n="nav.saverLevel">Saver Level</span>
+            </button>
+            <button onclick="switchTab('history'); toggleMobileMenu()" class="w-full text-left px-3 py-2 text-sm rounded-lg text-slate-300 hover:bg-slate-800 flex items-center space-x-3">
+                <i class="fa-solid fa-clock-rotate-left w-5 text-brand-400"></i><span data-i18n="nav.history">History</span>
+            </button>
+            <button onclick="switchTab('settings'); toggleMobileMenu()" class="w-full text-left px-3 py-2 text-sm rounded-lg text-slate-300 hover:bg-slate-800 flex items-center space-x-3">
+                <i class="fa-solid fa-gear w-5 text-brand-400"></i><span data-i18n="nav.settings">Settings</span>
+            </button>
         </div>
     </header>
 
-    <!-- BUSINESS CALENDAR & MAINTENANCE LOCK OVERLAY BANNER -->
-    <div id="system-lock-overlay" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-lg flex flex-col items-center justify-center p-6 text-center">
-        <div class="glass-card max-w-md w-full p-8 rounded-2xl border border-red-500/30 shadow-2xl relative overflow-hidden">
-            <div class="w-20 h-20 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center mx-auto mb-4 border border-red-500/20">
-                <i id="lock-icon" class="fa-solid fa-calendar-xmark text-4xl"></i>
-            </div>
-            <h2 id="lock-title" class="text-2xl font-bold text-white mb-2">System Closed</h2>
-            <p id="lock-message" class="text-sm text-gray-300 mb-6 leading-relaxed">
-                FinSave Pro operates strictly on Monday–Friday during official business hours. The system is paused on weekends, Thai Public Holidays, and during daily maintenance (23:00–00:00).
-            </p>
-            <div class="p-3 bg-gray-800/80 rounded-xl text-xs text-gray-400 border border-gray-700">
-                <span data-i18n="lock_reopen">System reopens automatically on next business day at 00:01 AM.</span>
-            </div>
-        </div>
-    </div>
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
-    <!-- MAIN CONTENT CONTAINER -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        
-        <!-- Memorial Theme / System Status Banner -->
-        <div id="theme-banner" class="mb-6 p-4 rounded-xl glass-card flex items-center justify-between border-l-4 border-l-gray-400">
-            <div class="flex items-center gap-3">
-                <i class="fa-solid fa-circle-info text-gray-400 text-lg"></i>
+        <!-- Lockout Overlay Banner when Business Calendar or Maintenance is ACTIVE -->
+        <div id="lockout-banner" class="hidden glass-panel rounded-2xl p-6 border-l-4 border-amber-500 bg-amber-950/20 mb-4">
+            <div class="flex items-start space-x-4">
+                <div class="p-3 bg-amber-500/20 text-amber-400 rounded-xl">
+                    <i class="fa-solid fa-lock text-2xl"></i>
+                </div>
                 <div>
-                    <h4 class="text-xs font-semibold text-gray-200 uppercase tracking-wider" data-i18n="memorial_mode_title">Soft Dark Enterprise Mode Active</h4>
-                    <p class="text-xs text-gray-400" id="memorial-mode-desc">Soft Dark Theme active automatically until Dec 31, 2026. Standard theme rules resume Jan 1, 2027.</p>
+                    <h3 class="font-bold text-base text-amber-300" id="lockout-title">System Operation Restricted</h3>
+                    <p class="text-xs text-slate-300 mt-1 leading-relaxed" id="lockout-msg">Saving operations are disabled today per business calendar rules.</p>
                 </div>
             </div>
-            <span class="text-[11px] px-2.5 py-1 rounded-full bg-gray-800 text-gray-300 font-mono border border-gray-700" id="current-date-badge">2026-07-24</span>
         </div>
 
-        <!-- TAB 1: DASHBOARD -->
-        <section id="tab-dashboard" class="tab-content space-y-6">
+        <!-- VIEW: DASHBOARD -->
+        <section id="view-dashboard" class="tab-content space-y-6">
             
-            <!-- Key Metric Cards -->
+            <!-- Key Performance Metrics Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
                 
                 <!-- Total Savings -->
-                <div class="glass-card p-4 rounded-2xl border border-gray-800">
-                    <div class="flex items-center justify-between text-gray-400 text-xs mb-2">
-                        <span data-i18n="dash_total_savings">Total Savings</span>
-                        <i class="fa-solid fa-wallet text-brand-400"></i>
+                <div class="glass-panel p-4 rounded-2xl flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-slate-400">
+                        <span class="text-xs font-medium uppercase tracking-wider" data-i18n="dash.totalSavings">Total Savings</span>
+                        <i class="fa-solid fa-vault text-brand-400"></i>
                     </div>
-                    <div class="text-2xl font-bold text-white tracking-tight" id="dash-total-savings">฿0.00</div>
-                    <p class="text-[11px] text-brand-400 mt-1 flex items-center gap-1">
-                        <i class="fa-solid fa-arrow-trend-up"></i> <span id="dash-savings-growth">0% growth</span>
-                    </p>
+                    <div class="mt-3">
+                        <div class="text-xl font-extrabold text-white auto-contrast" id="dash-total-savings">0 ฿</div>
+                        <p class="text-[10px] text-brand-400 font-semibold mt-1" id="dash-savings-rate">+0% this month</p>
+                    </div>
                 </div>
 
                 <!-- Saving Streak -->
-                <div class="glass-card p-4 rounded-2xl border border-gray-800">
-                    <div class="flex items-center justify-between text-gray-400 text-xs mb-2">
-                        <span data-i18n="dash_saving_streak">Saving Streak</span>
+                <div class="glass-panel p-4 rounded-2xl flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-slate-400">
+                        <span class="text-xs font-medium uppercase tracking-wider" data-i18n="dash.streak">Saving Streak</span>
                         <i class="fa-solid fa-fire text-amber-500"></i>
                     </div>
-                    <div class="text-2xl font-bold text-white tracking-tight" id="dash-streak-count">0 Days</div>
-                    <p class="text-[11px] text-amber-400 mt-1" data-i18n="dash_streak_desc">Active Days Count</p>
+                    <div class="mt-3">
+                        <div class="text-xl font-extrabold text-white auto-contrast" id="dash-streak">0 Days</div>
+                        <p class="text-[10px] text-slate-400 mt-1" data-i18n="dash.streakSub">Active continuous days</p>
+                    </div>
                 </div>
 
                 <!-- Saver Level -->
-                <div class="glass-card p-4 rounded-2xl border border-gray-800">
-                    <div class="flex items-center justify-between text-gray-400 text-xs mb-2">
-                        <span data-i18n="dash_saver_level">Saver Level</span>
-                        <i class="fa-solid fa-award text-purple-400"></i>
+                <div class="glass-panel p-4 rounded-2xl flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-slate-400">
+                        <span class="text-xs font-medium uppercase tracking-wider" data-i18n="dash.saverLevel">Saver Level</span>
+                        <i class="fa-solid fa-medal text-indigo-400"></i>
                     </div>
-                    <div class="text-xl font-bold text-purple-300 tracking-tight" id="dash-saver-level">Beginner</div>
-                    <p class="text-[11px] text-gray-400 mt-1" id="dash-next-level">Next: Bronze</p>
+                    <div class="mt-3">
+                        <div class="text-lg font-bold text-indigo-300" id="dash-saver-level">Beginner</div>
+                        <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+                            <div id="dash-level-progress" class="bg-indigo-500 h-full w-0 transition-all duration-500"></div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Emergency Fund -->
-                <div class="glass-card p-4 rounded-2xl border border-gray-800">
-                    <div class="flex items-center justify-between text-gray-400 text-xs mb-2">
-                        <span data-i18n="dash_emergency_fund">Emergency Fund</span>
-                        <i class="fa-solid fa-shield-halved text-blue-400"></i>
+                <div class="glass-panel p-4 rounded-2xl flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-slate-400">
+                        <span class="text-xs font-medium uppercase tracking-wider" data-i18n="dash.emergencyFund">Emergency Fund</span>
+                        <i class="fa-solid fa-shield-halved text-emerald-400"></i>
                     </div>
-                    <div class="text-2xl font-bold text-white tracking-tight" id="dash-emergency-fund">฿0.00</div>
-                    <p class="text-[11px] text-blue-400 mt-1" data-i18n="dash_emergency_target">3-Months Reserve</p>
+                    <div class="mt-3">
+                        <div class="text-xl font-extrabold text-white auto-contrast" id="dash-emergency-fund">0 ฿</div>
+                        <p class="text-[10px] text-slate-400 mt-1" id="dash-emergency-target">Target: 6x Expenses</p>
+                    </div>
                 </div>
 
                 <!-- Total Goals -->
-                <div class="glass-card p-4 rounded-2xl border border-gray-800">
-                    <div class="flex items-center justify-between text-gray-400 text-xs mb-2">
-                        <span data-i18n="dash_total_goals">Total Goals</span>
-                        <i class="fa-solid fa-bullseye text-emerald-400"></i>
+                <div class="glass-panel p-4 rounded-2xl flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-slate-400">
+                        <span class="text-xs font-medium uppercase tracking-wider" data-i18n="dash.totalGoals">Total Goals</span>
+                        <i class="fa-solid fa-crosshairs text-blue-400"></i>
                     </div>
-                    <div class="text-2xl font-bold text-white tracking-tight" id="dash-total-goals">0</div>
-                    <p class="text-[11px] text-gray-400 mt-1" data-i18n="dash_active_goals">Active Targets</p>
+                    <div class="mt-3">
+                        <div class="text-xl font-extrabold text-white auto-contrast" id="dash-total-goals">0</div>
+                        <p class="text-[10px] text-slate-400 mt-1" data-i18n="dash.goalsActive">Active financial targets</p>
+                    </div>
                 </div>
 
                 <!-- Completed Goals -->
-                <div class="glass-card p-4 rounded-2xl border border-gray-800">
-                    <div class="flex items-center justify-between text-gray-400 text-xs mb-2">
-                        <span data-i18n="dash_completed_goals">Completed Goals</span>
-                        <i class="fa-solid fa-circle-check text-green-400"></i>
+                <div class="glass-panel p-4 rounded-2xl flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-slate-400">
+                        <span class="text-xs font-medium uppercase tracking-wider" data-i18n="dash.completedGoals">Completed Goals</span>
+                        <i class="fa-solid fa-circle-check text-emerald-400"></i>
                     </div>
-                    <div class="text-2xl font-bold text-white tracking-tight" id="dash-completed-goals">0</div>
-                    <p class="text-[11px] text-green-400 mt-1" id="dash-goals-pct">0% Success Rate</p>
+                    <div class="mt-3">
+                        <div class="text-xl font-extrabold text-white auto-contrast" id="dash-completed-goals">0</div>
+                        <p class="text-[10px] text-emerald-400 font-semibold mt-1" id="dash-completed-percent">0% success rate</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Dashboard Analytics Quick Charts -->
+            <!-- Heatmap Calendar Preview & AI Overview -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Saving Trend Quick Chart -->
-                <div class="glass-card p-5 rounded-2xl lg:col-span-2 border border-gray-800">
+                <!-- Heatmap Calendar Card -->
+                <div class="lg:col-span-2 glass-panel p-6 rounded-2xl">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-chart-line text-brand-400"></i> <span data-i18n="dash_trend_title">Savings Accumulation Trend</span>
-                        </h3>
-                        <span class="text-xs text-gray-400 bg-gray-800 px-2.5 py-1 rounded-full">Real-time</span>
+                        <div>
+                            <h3 class="text-sm font-bold uppercase tracking-wider text-slate-200" data-i18n="heatmap.title">Saving Discipline Heatmap</h3>
+                            <p class="text-xs text-slate-400" data-i18n="heatmap.sub">Daily financial commitment visualization</p>
+                        </div>
+                        <div class="flex items-center space-x-2 text-xs">
+                            <span class="text-slate-400" data-i18n="heatmap.low">Low</span>
+                            <div class="w-3 h-3 rounded heatmap-1"></div>
+                            <div class="w-3 h-3 rounded heatmap-2"></div>
+                            <div class="w-3 h-3 rounded heatmap-3"></div>
+                            <div class="w-3 h-3 rounded heatmap-4"></div>
+                            <span class="text-slate-400" data-i18n="heatmap.high">High</span>
+                        </div>
                     </div>
-                    <div class="h-64">
-                        <canvas id="dashTrendChart"></canvas>
+                    <!-- Heatmap Grid Container -->
+                    <div id="heatmap-container" class="grid grid-cols-7 gap-1.5 sm:gap-2 mt-2">
+                        <!-- Dynamically populated 30/31 days grid -->
                     </div>
                 </div>
 
-                <!-- AI Quick Health Overview -->
-                <div class="glass-card p-5 rounded-2xl border border-gray-800 flex flex-col justify-between">
+                <!-- AI Quick Insights Engine Card -->
+                <div class="glass-panel p-6 rounded-2xl flex flex-col justify-between border-l-4 border-brand-500">
                     <div>
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                                <i class="fa-solid fa-brain text-purple-400"></i> <span data-i18n="dash_ai_health">AI Health Rating</span>
-                            </h3>
-                            <span class="text-xs px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-semibold" id="ai-health-badge">Good</span>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold uppercase tracking-wider text-brand-400 flex items-center gap-2">
+                                <i class="fa-solid fa-robot"></i> <span data-i18n="ai.title">AI Prediction Health Score</span>
+                            </span>
+                            <span id="dash-ai-score" class="text-2xl font-black text-brand-400">85/100</span>
                         </div>
-                        <div class="text-center py-4">
-                            <div class="relative inline-flex items-center justify-center">
-                                <span class="text-4xl font-extrabold text-white" id="ai-health-score">85</span>
-                                <span class="text-xs text-gray-400 ml-1">/100</span>
-                            </div>
-                            <p class="text-xs text-gray-400 mt-2" id="ai-health-text">Your discipline is consistent. Maintaining current pace will meet 90% of targets.</p>
-                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed" id="dash-ai-summary">
+                            Your saving consistency is strong. AI forecasts goal achievement 12 days ahead of original deadlines based on recent monthly saving velocity.
+                        </p>
                     </div>
-
-                    <div class="p-3 bg-gray-800/60 rounded-xl border border-gray-700/60 space-y-2">
-                        <div class="flex justify-between text-xs">
-                            <span class="text-gray-400" data-i18n="dash_consistency">Consistency Score</span>
-                            <span class="text-emerald-400 font-bold" id="dash-consistency-val">92%</span>
-                        </div>
-                        <div class="w-full bg-gray-700 h-1.5 rounded-full overflow-hidden">
-                            <div class="bg-emerald-400 h-full rounded-full" id="dash-consistency-bar" style="width: 92%"></div>
-                        </div>
+                    <div class="mt-4 pt-4 border-t border-slate-700/60 flex justify-between items-center text-xs">
+                        <span class="text-slate-400" data-i18n="ai.consistency">Saving Consistency</span>
+                        <span class="font-bold text-slate-200" id="dash-ai-consistency">92%</span>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- TAB 2: SAVINGS (RECORDING FORM) -->
-        <section id="tab-savings" class="tab-content hidden space-y-6">
-            <div class="max-w-xl mx-auto glass-card p-6 sm:p-8 rounded-2xl border border-gray-800 shadow-xl">
-                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-800">
-                    <div class="w-10 h-10 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center border border-brand-500/30">
-                        <i class="fa-solid fa-plus text-lg"></i>
+        <!-- VIEW: SAVINGS (RECORDING) -->
+        <section id="view-savings" class="tab-content hidden space-y-6">
+            <div class="max-w-2xl mx-auto glass-panel p-6 sm:p-8 rounded-2xl">
+                <div class="flex items-center space-x-3 mb-6 pb-4 border-b border-slate-700">
+                    <div class="p-3 rounded-xl bg-brand-500/20 text-brand-400">
+                        <i class="fa-solid fa-piggy-bank text-xl"></i>
                     </div>
                     <div>
-                        <h2 class="text-lg font-bold text-white" data-i18n="sav_entry_title">Record New Saving Entry</h2>
-                        <p class="text-xs text-gray-400" data-i18n="sav_entry_subtitle">Automated timestamped transaction recording</p>
+                        <h2 class="text-lg font-bold text-white" data-i18n="savings.addTitle">Record New Savings</h2>
+                        <p class="text-xs text-slate-400" data-i18n="savings.addSub">System automatically logs date, time, and currency conversion.</p>
                     </div>
                 </div>
 
-                <form id="saving-form" onsubmit="handleSavingSubmit(event)" class="space-y-5">
-                    <input type="hidden" id="saving-id" value="">
-
-                    <!-- Amount Input -->
+                <form id="form-add-saving" onsubmit="handleSaveEntry(event)" class="space-y-5">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-300 mb-1" data-i18n="sav_amount_label">Amount (*)</label>
-                        <div class="relative">
-                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 text-sm font-bold" id="form-currency-symbol">฿</span>
-                            <input type="number" step="0.01" min="0.01" required id="saving-amount" placeholder="0.00" class="w-full bg-gray-800/80 border border-gray-700 rounded-xl py-3 pl-9 pr-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500 font-bold text-lg">
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-2" data-i18n="savings.amount">Amount (<span class="current-curr-code">THB</span>)</label>
+                        <div class="relative rounded-xl shadow-sm">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                <span class="current-curr-symbol">฿</span>
+                            </div>
+                            <input type="number" step="0.01" id="save-amount" required min="1" placeholder="0.00" class="w-full pl-8 pr-4 py-3 bg-slate-900/80 border border-slate-700 rounded-xl text-base text-white focus:ring-2 focus:ring-brand-500 focus:outline-none transition">
                         </div>
                     </div>
 
-                    <!-- Note Input -->
                     <div>
-                        <label class="block text-xs font-semibold text-gray-300 mb-1" data-i18n="sav_note_label">Note / Remark</label>
-                        <input type="text" id="saving-note" placeholder="e.g. Daily salary deposit, Bonus, Spare change" class="w-full bg-gray-800/80 border border-gray-700 rounded-xl py-2.5 px-3.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-2" data-i18n="savings.note">Note / Category</label>
+                        <input type="text" id="save-note" required placeholder="e.g. Monthly Salary Savings, Bonus" class="w-full px-4 py-3 bg-slate-900/80 border border-slate-700 rounded-xl text-sm text-white focus:ring-2 focus:ring-brand-500 focus:outline-none transition">
                     </div>
 
-                    <!-- Auto Date & Time Display -->
-                    <div class="grid grid-cols-2 gap-4 p-3 bg-gray-800/40 rounded-xl border border-gray-800 text-xs">
-                        <div>
-                            <span class="text-gray-400 block" data-i18n="sav_auto_date">Auto Date</span>
-                            <span class="text-white font-mono font-medium" id="auto-date-val">2026-07-24</span>
-                        </div>
-                        <div>
-                            <span class="text-gray-400 block" data-i18n="sav_auto_time">Auto Time</span>
-                            <span class="text-white font-mono font-medium" id="auto-time-val">16:22:35</span>
-                        </div>
-                    </div>
-
-                    <!-- Form Action Buttons -->
-                    <div class="flex gap-3 pt-2">
-                        <button type="button" onclick="resetSavingForm()" id="btn-cancel-saving" class="hidden flex-1 py-3 px-4 rounded-xl bg-gray-800 text-gray-300 hover:bg-gray-700 text-sm font-medium transition-all" data-i18n="btn_cancel">Cancel</button>
-                        <button type="submit" id="btn-save-saving" class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-brand-600 to-emerald-500 hover:from-brand-500 hover:to-emerald-400 text-white font-bold text-sm shadow-lg shadow-brand-500/20 transition-all flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-floppy-disk"></i> <span data-i18n="sav_save_btn">Save Entry</span>
+                    <div class="pt-2">
+                        <button type="submit" id="btn-submit-saving" class="w-full py-3.5 px-4 bg-gradient-to-r from-brand-600 to-emerald-500 hover:from-brand-500 hover:to-emerald-400 text-white font-bold rounded-xl shadow-lg shadow-brand-600/30 transition transform active:scale-98 flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-plus-circle"></i>
+                            <span data-i18n="savings.submitBtn">Record Deposit</span>
                         </button>
                     </div>
                 </form>
             </div>
         </section>
 
-        <!-- TAB 3: GOALS -->
-        <section id="tab-goals" class="tab-content hidden space-y-6">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <!-- VIEW: GOALS -->
+        <section id="view-goals" class="tab-content hidden space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h2 class="text-xl font-bold text-white" data-i18n="goals_title">Savings Goals Management</h2>
-                    <p class="text-xs text-gray-400" data-i18n="goals_subtitle">Define, track, and accomplish specific financial targets</p>
+                    <h2 class="text-xl font-bold text-white" data-i18n="goals.title">Financial Target Goals</h2>
+                    <p class="text-xs text-slate-400" data-i18n="goals.sub">Set specific deadlines and monitor automated progress metrics.</p>
                 </div>
-                <button onclick="openGoalModal()" class="py-2.5 px-4 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-brand-500/20 transition-all">
-                    <i class="fa-solid fa-plus"></i> <span data-i18n="goals_add_new">Create New Goal</span>
+                <button onclick="openGoalModal()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center space-x-2 self-start sm:self-auto">
+                    <i class="fa-solid fa-plus"></i>
+                    <span data-i18n="goals.createBtn">Create Target Goal</span>
                 </button>
             </div>
 
-            <!-- Goals Grid Container -->
-            <div id="goals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Dynamic goals cards injected here -->
+            <!-- Goals Grid -->
+            <div id="goals-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Dynamically populated goal cards -->
             </div>
         </section>
 
-        <!-- TAB 4: ANALYTICS & HEATMAP & AI PREDICTION ENGINE -->
-        <section id="tab-analytics" class="tab-content hidden space-y-6">
-            
-            <!-- AI Analytics Engine Banner -->
-            <div class="glass-card p-6 rounded-2xl border border-purple-500/30 bg-gradient-to-r from-purple-900/20 via-gray-900 to-darkbg-800">
-                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center border border-purple-500/30">
-                            <i class="fa-solid fa-robot text-2xl"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-lg font-bold text-white" data-i18n="ai_engine_title">AI Prediction & Behaviour Engine</h2>
-                            <p class="text-xs text-purple-300" data-i18n="ai_engine_subtitle">Predictive models based on active saving consistency and growth rates</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-3 bg-gray-800/80 px-4 py-2 rounded-xl border border-gray-700">
-                        <span class="text-xs text-gray-400" data-i18n="ai_health_score_label">Health Score:</span>
-                        <span class="text-lg font-extrabold text-brand-400" id="ai-health-score-analytics">85/100</span>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-                    <div class="p-3 bg-gray-800/50 rounded-xl border border-gray-700/50">
-                        <span class="text-[11px] text-gray-400 block" data-i18n="ai_avg_daily">Avg Daily Saving</span>
-                        <span class="text-base font-bold text-white" id="ai-avg-daily">฿0.00</span>
-                    </div>
-                    <div class="p-3 bg-gray-800/50 rounded-xl border border-gray-700/50">
-                        <span class="text-[11px] text-gray-400 block" data-i18n="ai_goal_completion_chance">Goal Completion Chance</span>
-                        <span class="text-base font-bold text-emerald-400" id="ai-goal-chance">88%</span>
-                    </div>
-                    <div class="p-3 bg-gray-800/50 rounded-xl border border-gray-700/50">
-                        <span class="text-[11px] text-gray-400 block" data-i18n="ai_forecast_30">30-Day Forecast Growth</span>
-                        <span class="text-base font-bold text-purple-300" id="ai-forecast-30">+฿0.00</span>
-                    </div>
-                </div>
-
-                <div class="mt-4 p-3.5 bg-purple-950/40 rounded-xl border border-purple-800/40 text-xs text-purple-200 flex items-start gap-2">
-                    <i class="fa-solid fa-lightbulb text-amber-400 mt-0.5"></i>
-                    <span id="ai-recommendation-text">AI Recommendation: Save an additional ฿150/day to reach your primary goal 12 days ahead of schedule.</span>
+        <!-- VIEW: ANALYTICS -->
+        <section id="view-analytics" class="tab-content hidden space-y-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-white" data-i18n="analytics.title">Real-time Financial Analytics & AI</h2>
+                    <p class="text-xs text-slate-400" data-i18n="analytics.sub">Comparative saving trends and machine learning forecasts.</p>
                 </div>
             </div>
 
-            <!-- Heatmap Section -->
-            <div class="glass-card p-6 rounded-2xl border border-gray-800">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
-                    <div>
-                        <h3 class="text-base font-bold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-calendar-days text-brand-400"></i> <span data-i18n="heatmap_title">Saving Heatmap Calendar</span>
-                        </h3>
-                        <p class="text-xs text-gray-400" data-i18n="heatmap_subtitle">Daily discipline tracker (Red = low/none, Green = optimal saving)</p>
-                    </div>
-                    <div class="flex items-center gap-2 text-xs">
-                        <span class="text-gray-400">Less</span>
-                        <span class="w-3 h-3 bg-red-900/60 rounded-xs"></span>
-                        <span class="w-3 h-3 bg-amber-600/60 rounded-xs"></span>
-                        <span class="w-3 h-3 bg-emerald-600/70 rounded-xs"></span>
-                        <span class="w-3 h-3 bg-brand-500 rounded-xs"></span>
-                        <span class="text-gray-400">More</span>
-                    </div>
-                </div>
-
-                <!-- Heatmap Container -->
-                <div class="overflow-x-auto pb-2">
-                    <div id="heatmap-calendar-grid" class="flex gap-1 min-w-[700px]">
-                        <!-- Dynamic columns rendered in JS -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Charts Grid -->
+            <!-- Charts Row 1 -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Total Savings Growth Chart -->
-                <div class="glass-card p-5 rounded-2xl border border-gray-800">
-                    <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-chart-area text-blue-400"></i> <span data-i18n="chart_growth_title">Cumulative Savings Trend</span>
-                    </h3>
-                    <div class="h-64">
-                        <canvas id="growthChart"></canvas>
+                <div class="glass-panel p-6 rounded-2xl">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-4" data-i18n="analytics.totalGraph">Total Saving Graph</h3>
+                    <div class="h-64 relative">
+                        <canvas id="chart-total-trend"></canvas>
                     </div>
                 </div>
 
-                <!-- Monthly Comparison Chart -->
-                <div class="glass-card p-5 rounded-2xl border border-gray-800">
-                    <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-chart-column text-emerald-400"></i> <span data-i18n="chart_monthly_title">Monthly Saving Comparison</span>
-                    </h3>
-                    <div class="h-64">
-                        <canvas id="monthlyChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB 5: SAVER LEVEL -->
-        <section id="tab-saverlevel" class="tab-content hidden space-y-6">
-            <div class="glass-card p-6 sm:p-8 rounded-2xl border border-gray-800 text-center max-w-2xl mx-auto">
-                <div id="tier-badge-icon" class="w-24 h-24 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center mx-auto mb-4 border-2 border-purple-500/40 shadow-xl">
-                    <i class="fa-solid fa-shield-cat text-5xl"></i>
-                </div>
-                <h2 class="text-2xl font-extrabold text-white" id="level-current-name">Beginner Saver</h2>
-                <p class="text-xs text-gray-400 mt-1" id="level-next-requirement">Save ฿5,000 more and reach 5-day streak to unlock Bronze</p>
-
-                <!-- Progress Bar -->
-                <div class="mt-6 max-w-md mx-auto space-y-2">
-                    <div class="flex justify-between text-xs text-gray-400">
-                        <span>Progress to Next Tier</span>
-                        <span id="level-progress-pct" class="font-bold text-brand-400">0%</span>
-                    </div>
-                    <div class="w-full bg-gray-800 h-3 rounded-full overflow-hidden p-0.5 border border-gray-700">
-                        <div id="level-progress-bar" class="bg-gradient-to-r from-brand-500 to-emerald-400 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                <div class="glass-panel p-6 rounded-2xl">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-4" data-i18n="analytics.monthlyComparison">Monthly Comparison</h3>
+                    <div class="h-64 relative">
+                        <canvas id="chart-monthly-bar"></canvas>
                     </div>
                 </div>
             </div>
 
-            <!-- Tiers Overview Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div id="tier-card-Beginner" class="glass-card p-4 rounded-xl border border-gray-800 space-y-2">
-                    <div class="flex items-center justify-between">
-                        <span class="font-bold text-sm text-gray-300">1. Beginner</span>
-                        <i class="fa-solid fa-seedling text-emerald-400"></i>
+            <!-- Detailed AI Analysis Engine Block -->
+            <div class="glass-panel p-6 sm:p-8 rounded-2xl border-t-2 border-brand-400">
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="p-3 bg-brand-500/20 text-brand-400 rounded-xl">
+                        <i class="fa-solid fa-brain text-xl"></i>
                     </div>
-                    <p class="text-xs text-gray-400">Entry level saver.</p>
-                    <div class="text-[11px] text-gray-500 font-mono">Req: ฿0 Savings</div>
-                </div>
-
-                <div id="tier-card-Bronze" class="glass-card p-4 rounded-xl border border-gray-800 space-y-2 opacity-60">
-                    <div class="flex items-center justify-between">
-                        <span class="font-bold text-sm text-amber-500">2. Bronze</span>
-                        <i class="fa-solid fa-award text-amber-500"></i>
-                    </div>
-                    <p class="text-xs text-gray-400">Building basic momentum.</p>
-                    <div class="text-[11px] text-gray-500 font-mono">Req: ฿5,000 & 3-Day Streak</div>
-                </div>
-
-                <div id="tier-card-Silver" class="glass-card p-4 rounded-xl border border-gray-800 space-y-2 opacity-60">
-                    <div class="flex items-center justify-between">
-                        <span class="font-bold text-sm text-gray-300">3. Silver</span>
-                        <i class="fa-solid fa-medal text-gray-300"></i>
-                    </div>
-                    <p class="text-xs text-gray-400">Consistent discipline.</p>
-                    <div class="text-[11px] text-gray-500 font-mono">Req: ฿25,000 & 7-Day Streak</div>
-                </div>
-
-                <div id="tier-card-Gold" class="glass-card p-4 rounded-xl border border-gray-800 space-y-2 opacity-60">
-                    <div class="flex items-center justify-between">
-                        <span class="font-bold text-sm text-yellow-400">4. Gold</span>
-                        <i class="fa-solid fa-crown text-yellow-400"></i>
-                    </div>
-                    <p class="text-xs text-gray-400">Mastering habit control.</p>
-                    <div class="text-[11px] text-gray-500 font-mono">Req: ฿100,000 & 14-Day Streak</div>
-                </div>
-
-                <div id="tier-card-Platinum" class="glass-card p-4 rounded-xl border border-gray-800 space-y-2 opacity-60">
-                    <div class="flex items-center justify-between">
-                        <span class="font-bold text-sm text-cyan-400">5. Platinum</span>
-                        <i class="fa-solid fa-gem text-cyan-400"></i>
-                    </div>
-                    <p class="text-xs text-gray-400">High-capacity accumulation.</p>
-                    <div class="text-[11px] text-gray-500 font-mono">Req: ฿250,000 & 1 Goal Done</div>
-                </div>
-
-                <div id="tier-card-Diamond" class="glass-card p-4 rounded-xl border border-gray-800 space-y-2 opacity-60">
-                    <div class="flex items-center justify-between">
-                        <span class="font-bold text-sm text-indigo-400">6. Diamond</span>
-                        <i class="fa-solid fa-diamond text-indigo-400"></i>
-                    </div>
-                    <p class="text-xs text-gray-400">Elite financial strategist.</p>
-                    <div class="text-[11px] text-gray-500 font-mono">Req: ฿500,000 & 3 Goals Done</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB 6: HISTORY (SEARCH, EDIT, DELETE) -->
-        <section id="tab-history" class="tab-content hidden space-y-6">
-            <div class="glass-card p-6 rounded-2xl border border-gray-800">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
                     <div>
-                        <h2 class="text-lg font-bold text-white" data-i18n="hist_title">Saving Records History</h2>
-                        <p class="text-xs text-gray-400" data-i18n="hist_subtitle">Full search, filter, edit, and audit log</p>
-                    </div>
-
-                    <!-- Search Input -->
-                    <div class="relative w-full sm:w-64">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-xs text-gray-400"></i>
-                        <input type="text" id="history-search" oninput="renderHistoryTable()" placeholder="Search notes or dates..." class="w-full bg-gray-800 border border-gray-700 rounded-xl py-2 pl-9 pr-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        <h3 class="text-base font-bold text-white" data-i18n="ai.engineTitle">AI Forecast & Saving Recommendation</h3>
+                        <p class="text-xs text-slate-400" data-i18n="ai.engineSub">Automated behavioural analytics based on savings velocity</p>
                     </div>
                 </div>
 
-                <!-- Table Container -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+                        <span class="text-xs font-medium text-slate-400" data-i18n="ai.growthRate">Saving Growth Rate</span>
+                        <div id="ai-growth-rate" class="text-xl font-extrabold text-brand-400 mt-1">+14.2% / month</div>
+                        <p class="text-[11px] text-slate-400 mt-2" data-i18n="ai.growthSub">Outperforming average benchmark</p>
+                    </div>
+
+                    <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+                        <span class="text-xs font-medium text-slate-400" data-i18n="ai.completionChance">Goal Completion Chance</span>
+                        <div id="ai-goal-chance" class="text-xl font-extrabold text-emerald-400 mt-1">94.8%</div>
+                        <p class="text-[11px] text-slate-400 mt-2" data-i18n="ai.chanceSub">Based on active target deadlines</p>
+                    </div>
+
+                    <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+                        <span class="text-xs font-medium text-slate-400" data-i18n="ai.avgDeposit">Average Saving Deposit</span>
+                        <div id="ai-avg-deposit" class="text-xl font-extrabold text-indigo-400 mt-1">0 ฿</div>
+                        <p class="text-[11px] text-slate-400 mt-2" data-i18n="ai.avgSub">Per savings transaction</p>
+                    </div>
+                </div>
+
+                <div class="mt-6 p-4 rounded-xl bg-slate-800/40 border border-slate-700/60">
+                    <h4 class="text-xs font-bold uppercase text-brand-400 tracking-wider mb-2" data-i18n="ai.recommendationTitle">Monthly Recommendation</h4>
+                    <p id="ai-recommendation-text" class="text-xs text-slate-300 leading-relaxed">
+                        To optimize interest compounding, allocate an additional 5% of monthly deposits into your primary goal within the next 14 days.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: SAVER LEVEL -->
+        <section id="view-saver-level" class="tab-content hidden space-y-6">
+            <div class="text-center max-w-xl mx-auto space-y-2">
+                <h2 class="text-2xl font-extrabold text-white" data-i18n="level.title">Saver Level Progression</h2>
+                <p class="text-xs text-slate-400" data-i18n="level.sub">Calculated directly from Total Savings, Continuous Streak, and Goal Achievements.</p>
+            </div>
+
+            <!-- Tiers Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
+                
+                <!-- Beginner -->
+                <div class="glass-panel p-6 rounded-2xl border border-slate-700 flex flex-col justify-between" id="tier-beginner">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Level 1</span>
+                        <i class="fa-solid fa-seedling text-xl text-slate-400"></i>
+                    </div>
+                    <div class="my-4">
+                        <h3 class="text-lg font-bold text-white">Beginner</h3>
+                        <p class="text-xs text-slate-400 mt-1">Total Savings &lt; 1,000 ฿</p>
+                    </div>
+                    <div class="text-xs font-semibold py-1.5 px-3 rounded-lg text-center bg-slate-800 text-slate-400" id="badge-beginner">Locked</div>
+                </div>
+
+                <!-- Bronze -->
+                <div class="glass-panel p-6 rounded-2xl border border-slate-700 flex flex-col justify-between" id="tier-bronze">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-amber-600">Level 2</span>
+                        <i class="fa-solid fa-award text-xl text-amber-600"></i>
+                    </div>
+                    <div class="my-4">
+                        <h3 class="text-lg font-bold text-amber-500">Bronze</h3>
+                        <p class="text-xs text-slate-400 mt-1">1,000 ฿ – 10,000 ฿</p>
+                    </div>
+                    <div class="text-xs font-semibold py-1.5 px-3 rounded-lg text-center bg-slate-800 text-slate-400" id="badge-bronze">Locked</div>
+                </div>
+
+                <!-- Silver -->
+                <div class="glass-panel p-6 rounded-2xl border border-slate-700 flex flex-col justify-between" id="tier-silver">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Level 3</span>
+                        <i class="fa-solid fa-medal text-xl text-slate-300"></i>
+                    </div>
+                    <div class="my-4">
+                        <h3 class="text-lg font-bold text-slate-200">Silver</h3>
+                        <p class="text-xs text-slate-400 mt-1">10,000 ฿ – 50,000 ฿</p>
+                    </div>
+                    <div class="text-xs font-semibold py-1.5 px-3 rounded-lg text-center bg-slate-800 text-slate-400" id="badge-silver">Locked</div>
+                </div>
+
+                <!-- Gold -->
+                <div class="glass-panel p-6 rounded-2xl border border-slate-700 flex flex-col justify-between" id="tier-gold">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Level 4</span>
+                        <i class="fa-solid fa-crown text-xl text-amber-400"></i>
+                    </div>
+                    <div class="my-4">
+                        <h3 class="text-lg font-bold text-amber-400">Gold</h3>
+                        <p class="text-xs text-slate-400 mt-1">50,000 ฿ – 200,000 ฿</p>
+                    </div>
+                    <div class="text-xs font-semibold py-1.5 px-3 rounded-lg text-center bg-slate-800 text-slate-400" id="badge-gold">Locked</div>
+                </div>
+
+                <!-- Platinum -->
+                <div class="glass-panel p-6 rounded-2xl border border-slate-700 flex flex-col justify-between" id="tier-platinum">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Level 5</span>
+                        <i class="fa-solid fa-gem text-xl text-emerald-400"></i>
+                    </div>
+                    <div class="my-4">
+                        <h3 class="text-lg font-bold text-emerald-300">Platinum</h3>
+                        <p class="text-xs text-slate-400 mt-1">200,000 ฿ – 500,000 ฿</p>
+                    </div>
+                    <div class="text-xs font-semibold py-1.5 px-3 rounded-lg text-center bg-slate-800 text-slate-400" id="badge-platinum">Locked</div>
+                </div>
+
+                <!-- Diamond -->
+                <div class="glass-panel p-6 rounded-2xl border border-slate-700 flex flex-col justify-between" id="tier-diamond">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-cyan-400">Level 6</span>
+                        <i class="fa-solid fa-diamond text-xl text-cyan-400"></i>
+                    </div>
+                    <div class="my-4">
+                        <h3 class="text-lg font-bold text-cyan-300">Diamond</h3>
+                        <p class="text-xs text-slate-400 mt-1">&gt; 500,000 ฿</p>
+                    </div>
+                    <div class="text-xs font-semibold py-1.5 px-3 rounded-lg text-center bg-slate-800 text-slate-400" id="badge-diamond">Locked</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: HISTORY -->
+        <section id="view-history" class="tab-content hidden space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-white" data-i18n="history.title">Saving Records History</h2>
+                    <p class="text-xs text-slate-400" data-i18n="history.sub">Comprehensive record ledger with search and edit operations.</p>
+                </div>
+
+                <!-- Search Input -->
+                <div class="relative w-full sm:w-64">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-xs text-slate-400"></i>
+                    <input type="text" id="history-search" onkeyup="filterHistory()" placeholder="Search notes or dates..." class="w-full pl-9 pr-4 py-2 bg-slate-900/80 border border-slate-700 rounded-xl text-xs text-white focus:ring-1 focus:ring-brand-500 focus:outline-none">
+                </div>
+            </div>
+
+            <!-- Table Container -->
+            <div class="glass-panel rounded-2xl overflow-hidden border border-slate-800">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs border-collapse">
-                        <thead>
-                            <tr class="border-b border-gray-800 text-gray-400 uppercase font-semibold">
-                                <th class="py-3 px-4" data-i18n="th_date">Date & Time</th>
-                                <th class="py-3 px-4" data-i18n="th_amount">Amount</th>
-                                <th class="py-3 px-4" data-i18n="th_note">Note</th>
-                                <th class="py-3 px-4 text-right" data-i18n="th_actions">Actions</th>
+                    <table class="w-full text-left text-xs text-slate-300">
+                        <thead class="bg-slate-900/90 uppercase text-[10px] tracking-wider text-slate-400 border-b border-slate-800">
+                            <tr>
+                                <th class="px-6 py-3.5">Date & Time</th>
+                                <th class="px-6 py-3.5">Note / Category</th>
+                                <th class="px-6 py-3.5">Amount</th>
+                                <th class="px-6 py-3.5 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="history-table-body" class="divide-y divide-gray-800/60 text-gray-300">
-                            <!-- Dynamic rows injected here -->
+                        <tbody id="history-table-body" class="divide-y divide-slate-800">
+                            <!-- Dynamically populated entries -->
                         </tbody>
                     </table>
                 </div>
             </div>
         </section>
 
-        <!-- TAB 7: SETTINGS -->
-        <section id="tab-settings" class="tab-content hidden space-y-6">
-            <div class="max-w-2xl mx-auto glass-card p-6 sm:p-8 rounded-2xl border border-gray-800 space-y-6">
+        <!-- VIEW: SETTINGS -->
+        <section id="view-settings" class="tab-content hidden space-y-6">
+            <div class="max-w-2xl mx-auto glass-panel p-6 sm:p-8 rounded-2xl space-y-6">
                 <div>
-                    <h2 class="text-lg font-bold text-white" data-i18n="set_title">System Settings</h2>
-                    <p class="text-xs text-gray-400" data-i18n="set_subtitle">Configure interface, preferences, and automated background policies</p>
+                    <h2 class="text-xl font-bold text-white" data-i18n="settings.title">System Settings</h2>
+                    <p class="text-xs text-slate-400" data-i18n="settings.sub">Configure preferences and regional parameters.</p>
                 </div>
 
-                <!-- Language Selector -->
-                <div class="p-4 bg-gray-800/40 rounded-xl border border-gray-800 flex items-center justify-between">
-                    <div>
-                        <h4 class="text-sm font-semibold text-white" data-i18n="set_lang_title">System Language</h4>
-                        <p class="text-xs text-gray-400" data-i18n="set_lang_desc">Switch interface labels between Thai and English</p>
+                <div class="space-y-4 divide-y divide-slate-800">
+                    
+                    <!-- Language Selection -->
+                    <div class="pt-4 flex items-center justify-between">
+                        <div>
+                            <h4 class="text-sm font-semibold text-white" data-i18n="settings.lang">System Language</h4>
+                            <p class="text-xs text-slate-400" data-i18n="settings.langSub">Switch between Thai and English languages.</p>
+                        </div>
+                        <select id="setting-language" onchange="setLanguage(this.value)" class="bg-slate-900 border border-slate-700 text-xs text-white rounded-xl px-3 py-2 focus:ring-1 focus:ring-brand-500">
+                            <option value="th">🇹🇭 ภาษาไทย (Thai)</option>
+                            <option value="en">🇺🇸 English</option>
+                        </select>
                     </div>
-                    <select id="lang-switcher" onchange="setLanguage(this.value)" class="bg-gray-800 border border-gray-700 text-xs font-semibold text-white py-2 px-3 rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-500 cursor-pointer">
-                        <option value="EN">🇺🇸 English</option>
-                        <option value="TH">🇹🇭 ไทย (Thai)</option>
-                    </select>
-                </div>
 
-                <!-- Theme Preference -->
-                <div class="p-4 bg-gray-800/40 rounded-xl border border-gray-800 flex items-center justify-between">
-                    <div>
-                        <h4 class="text-sm font-semibold text-white" data-i18n="set_theme_title">Auto Theme Policy</h4>
-                        <p class="text-xs text-gray-400" data-i18n="set_theme_desc">Soft Dark Theme active automatically through 2026</p>
+                    <!-- Auto Theme & Soft Dark -->
+                    <div class="pt-4 flex items-center justify-between">
+                        <div>
+                            <h4 class="text-sm font-semibold text-white" data-i18n="settings.theme">Theme Mode</h4>
+                            <p class="text-xs text-slate-400" id="theme-status-desc">Memorial Soft Dark active until Dec 31, 2026.</p>
+                        </div>
+                        <span class="text-xs font-semibold px-3 py-1 rounded-full bg-brand-500/20 text-brand-400 border border-brand-500/30">Auto Soft Dark</span>
                     </div>
-                    <span class="text-xs px-2.5 py-1 bg-brand-500/20 text-brand-400 rounded-md font-mono border border-brand-500/30">Memorial Dark</span>
-                </div>
 
-                <!-- Notification Settings -->
-                <div class="p-4 bg-gray-800/40 rounded-xl border border-gray-800 space-y-3">
-                    <h4 class="text-sm font-semibold text-white" data-i18n="set_notif_title">Automated Notification Rules</h4>
-                    <div class="space-y-2 text-xs text-gray-300">
-                        <label class="flex items-center gap-2">
-                            <input type="checkbox" checked disabled class="rounded border-gray-700 text-brand-500 focus:ring-0">
-                            <span data-i18n="set_notif_1">Daily Savings Reminder & Goal Nudges</span>
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="checkbox" checked disabled class="rounded border-gray-700 text-brand-500 focus:ring-0">
-                            <span data-i18n="set_notif_2">Business Calendar Closure & Maintenance Alerts</span>
-                        </label>
+                    <!-- Notification Controls -->
+                    <div class="pt-4 flex items-center justify-between">
+                        <div>
+                            <h4 class="text-sm font-semibold text-white" data-i18n="settings.noti">Automated Notifications</h4>
+                            <p class="text-xs text-slate-400" data-i18n="settings.notiSub">Receive alerts for goals, maintenance, and streak maintenance.</p>
+                        </div>
+                        <input type="checkbox" checked id="setting-noti-toggle" class="w-5 h-5 accent-brand-500 cursor-pointer">
                     </div>
-                </div>
 
-                <!-- Manual Refresh Button -->
-                <div class="pt-2 flex items-center justify-between border-t border-gray-800">
-                    <button onclick="syncDataFromSheets()" class="py-2.5 px-4 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-semibold text-xs flex items-center gap-2 transition-all">
-                        <i class="fa-solid fa-rotate"></i> <span data-i18n="set_refresh_btn">Force Data Sync (F5)</span>
-                    </button>
-                    <div class="text-right">
-                        <span class="text-xs text-gray-400 block">FinSave Pro 2026 Enterprise</span>
-                        <span class="text-[10px] text-gray-500 font-mono">Build 5.2.0-PROD</span>
+                    <!-- Refresh App Data -->
+                    <div class="pt-4 flex items-center justify-between">
+                        <div>
+                            <h4 class="text-sm font-semibold text-white" data-i18n="settings.refresh">Sync & Refresh App</h4>
+                            <p class="text-xs text-slate-400" data-i18n="settings.refreshSub">Force synchronize local memory with remote cloud database.</p>
+                        </div>
+                        <button onclick="refreshData()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white rounded-xl transition flex items-center space-x-2">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                            <span data-i18n="settings.refreshBtn">Refresh Data</span>
+                        </button>
+                    </div>
+
+                    <!-- Version Information -->
+                    <div class="pt-4 border-t border-slate-800 flex items-center justify-between">
+                        <div>
+                            <h4 class="text-sm font-semibold text-white">FinSave Pro Version</h4>
+                            <p class="text-xs text-slate-400">Build V5.4.0 (Enterprise Release)</p>
+                        </div>
+                        <span class="text-xs text-slate-500 font-mono">2026.07.26</span>
                     </div>
                 </div>
             </div>
@@ -691,327 +688,302 @@
 
     </main>
 
-    <!-- GOAL MODAL -->
-    <div id="goal-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="glass-card max-w-md w-full p-6 rounded-2xl border border-gray-800 shadow-2xl relative">
-            <button onclick="closeGoalModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-            <h3 class="text-lg font-bold text-white mb-4" id="goal-modal-title">Create Saving Goal</h3>
-            <form onsubmit="handleGoalSubmit(event)" class="space-y-4">
-                <input type="hidden" id="goal-id" value="">
+    <!-- Goal Modal Dialog -->
+    <div id="modal-goal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+        <div class="glass-panel w-full max-w-md p-6 rounded-2xl shadow-2xl border border-slate-700">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider" data-i18n="goals.modalTitle">Add Target Goal</h3>
+                <button onclick="closeGoalModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="handleSaveGoal(event)" class="space-y-4 mt-4">
                 <div>
-                    <label class="block text-xs font-semibold text-gray-300 mb-1" data-i18n="modal_goal_name">Goal Name (*)</label>
-                    <input type="text" id="goal-name" required placeholder="e.g. Emergency Fund, New Laptop, Vacation" class="w-full bg-gray-800 border border-gray-700 rounded-xl py-2.5 px-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1" data-i18n="goals.name">Goal Name</label>
+                    <input type="text" id="goal-name" required placeholder="e.g. New Macbook Pro, Travel Fund" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:ring-1 focus:ring-brand-500 focus:outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-300 mb-1" data-i18n="modal_target_amount">Target Amount (*)</label>
-                    <input type="number" step="0.01" min="1" id="goal-target" required placeholder="0.00" class="w-full bg-gray-800 border border-gray-700 rounded-xl py-2.5 px-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1" data-i18n="goals.target">Target Amount (<span class="current-curr-code">THB</span>)</label>
+                    <input type="number" step="0.01" id="goal-target" required min="1" placeholder="0.00" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:ring-1 focus:ring-brand-500 focus:outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-300 mb-1" data-i18n="modal_deadline">Target Deadline (*)</label>
-                    <input type="date" id="goal-deadline" required class="w-full bg-gray-800 border border-gray-700 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1" data-i18n="goals.deadline">Deadline Date</label>
+                    <input type="date" id="goal-deadline" required class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:ring-1 focus:ring-brand-500 focus:outline-none">
                 </div>
-                <div class="pt-2 flex gap-3">
-                    <button type="button" onclick="closeGoalModal()" class="flex-1 py-2.5 rounded-xl bg-gray-800 text-gray-300 hover:bg-gray-700 text-xs font-semibold" data-i18n="btn_cancel">Cancel</button>
-                    <button type="submit" class="flex-1 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs shadow-lg shadow-brand-500/20" data-i18n="btn_save">Save Goal</button>
+                <div class="pt-3 flex space-x-3">
+                    <button type="button" onclick="closeGoalModal()" class="w-1/2 py-2 bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-semibold rounded-xl" data-i18n="btn.cancel">Cancel</button>
+                    <button type="submit" class="w-1/2 py-2 bg-brand-600 hover:bg-brand-500 text-xs text-white font-bold rounded-xl" data-i18n="btn.save">Save Goal</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- NOTIFICATION CENTER DRAWER -->
-    <div id="notif-drawer" class="hidden fixed inset-y-0 right-0 z-50 w-full sm:w-80 glass-card bg-darkbg-900/95 border-l border-gray-800 p-5 flex flex-col justify-between shadow-2xl transition-all">
-        <div>
-            <div class="flex items-center justify-between pb-4 border-b border-gray-800 mb-4">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-bell text-brand-400"></i>
-                    <h3 class="text-sm font-bold text-white" data-i18n="notif_center_title">Notification Center</h3>
+    <!-- Edit Saving Entry Modal Dialog -->
+    <div id="modal-edit-saving" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+        <div class="glass-panel w-full max-w-md p-6 rounded-2xl shadow-2xl border border-slate-700">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider">Edit Saving Entry</h3>
+                <button onclick="closeEditModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="handleUpdateEntry(event)" class="space-y-4 mt-4">
+                <input type="hidden" id="edit-saving-id">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1">Amount (<span class="current-curr-code">THB</span>)</label>
+                    <input type="number" step="0.01" id="edit-saving-amount" required min="1" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white">
                 </div>
-                <button onclick="toggleNotificationDrawer()" class="text-gray-400 hover:text-white">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
-
-            <div id="notif-list" class="space-y-3 max-h-[70vh] overflow-y-auto pr-1">
-                <!-- Notifications dynamic list -->
-            </div>
-        </div>
-
-        <div class="pt-4 border-t border-gray-800 text-center">
-            <button onclick="clearNotifications()" class="text-xs text-gray-400 hover:text-white" data-i18n="notif_clear_all">Clear All Notifications</button>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1">Note</label>
+                    <input type="text" id="edit-saving-note" required class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white">
+                </div>
+                <div class="pt-3 flex space-x-3">
+                    <button type="button" onclick="closeEditModal()" class="w-1/2 py-2 bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-semibold rounded-xl">Cancel</button>
+                    <button type="submit" class="w-1/2 py-2 bg-brand-600 hover:bg-brand-500 text-xs text-white font-bold rounded-xl">Update Entry</button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- JAVASCRIPT CORE LOGIC -->
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
+
+    <!-- Footer -->
+    <footer class="mt-auto py-4 border-t border-slate-800/80 text-center text-[11px] text-slate-500">
+        <p>© 2026 FinSave Pro v5.4.0 Enterprise Edition. All Rights Reserved.</p>
+    </footer>
+
     <script>
-        // APPS SCRIPT & SPREADSHEET CONFIG (HIDDEN FROM DIRECT EDIT UI)
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyrvBoNKNSwaOgSJ-CHgiH2uZfdaqT7hXKe3r5NmKQUvMxTBcLgJmpCaNDhNLk1xPU/exec';
-        const SPREADSHEET_ID = '1DxYFSRaKnLvXp4mIyC7mSd75aDF7KWB7aKMNWBxTda8';
+        // System Config & Cloud Credentials (Hidden from UI)
+        const SPREADSHEET_ID = "1DxYFSRaKnLvXp4mIyC7mSd75aDF7KWB7aKMNWBxTda8";
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyrvBoNKNSwaOgSJ-CHgiH2uZfdaqT7hXKe3r5NmKQUvMxTBcLgJmpCaNDhNLk1xPU/exec";
 
-        // CURRENCY RATES (Base THB)
-        const CURRENCY_RATES = {
-            THB: { rate: 1, symbol: '฿' },
-            USD: { rate: 0.028, symbol: '$' },
-            EUR: { rate: 0.025, symbol: '€' },
-            JPY: { rate: 4.25, symbol: '¥' }
-        };
-
-        // INTERNATIONALIZATION DICTIONARY
-        const I18N = {
-            EN: {
-                dash_total_savings: "Total Savings",
-                dash_saving_streak: "Saving Streak",
-                dash_saver_level: "Saver Level",
-                dash_emergency_fund: "Emergency Fund",
-                dash_total_goals: "Total Goals",
-                dash_completed_goals: "Completed Goals",
-                dash_streak_desc: "Active Days Count",
-                dash_emergency_target: "3-Months Reserve",
-                dash_active_goals: "Active Targets",
-                dash_trend_title: "Savings Accumulation Trend",
-                dash_ai_health: "AI Health Rating",
-                dash_consistency: "Consistency Score",
-                sav_entry_title: "Record New Saving Entry",
-                sav_entry_subtitle: "Automated timestamped transaction recording",
-                sav_amount_label: "Amount (*)",
-                sav_note_label: "Note / Remark",
-                sav_auto_date: "Auto Date",
-                sav_auto_time: "Auto Time",
-                sav_save_btn: "Save Entry",
-                goals_title: "Savings Goals Management",
-                goals_subtitle: "Define, track, and accomplish specific financial targets",
-                goals_add_new: "Create New Goal",
-                ai_engine_title: "AI Prediction & Behaviour Engine",
-                ai_engine_subtitle: "Predictive models based on active saving consistency and growth rates",
-                ai_health_score_label: "Health Score:",
-                ai_avg_daily: "Avg Daily Saving",
-                ai_goal_completion_chance: "Goal Completion Chance",
-                ai_forecast_30: "30-Day Forecast Growth",
-                heatmap_title: "Saving Heatmap Calendar",
-                heatmap_subtitle: "Daily discipline tracker (Red = low/none, Green = optimal saving)",
-                chart_growth_title: "Cumulative Savings Trend",
-                chart_monthly_title: "Monthly Saving Comparison",
-                hist_title: "Saving Records History",
-                hist_subtitle: "Full search, filter, edit, and audit log",
-                th_date: "Date & Time",
-                th_amount: "Amount",
-                th_note: "Note",
-                th_actions: "Actions",
-                set_title: "System Settings",
-                set_subtitle: "Configure interface, preferences, and automated background policies",
-                set_lang_title: "System Language",
-                set_lang_desc: "Switch interface labels between Thai and English",
-                set_theme_title: "Auto Theme Policy",
-                set_theme_desc: "Soft Dark Theme active automatically through 2026",
-                set_notif_title: "Automated Notification Rules",
-                set_notif_1: "Daily Savings Reminder & Goal Nudges",
-                set_notif_2: "Business Calendar Closure & Maintenance Alerts",
-                set_refresh_btn: "Force Data Sync (F5)",
-                modal_goal_name: "Goal Name (*)",
-                modal_target_amount: "Target Amount (*)",
-                modal_deadline: "Target Deadline (*)",
-                notif_center_title: "Notification Center",
-                notif_clear_all: "Clear All Notifications",
-                btn_cancel: "Cancel",
-                btn_save: "Save Goal",
-                memorial_mode_title: "Soft Dark Enterprise Mode Active",
-                lock_reopen: "System reopens automatically on next business day at 00:01 AM."
-            },
-            TH: {
-                dash_total_savings: "ยอดเงินออมรวม",
-                dash_saving_streak: "สถิติออมต่อเนื่อง",
-                dash_saver_level: "ระดับนักออม",
-                dash_emergency_fund: "เงินสำรองฉุกเฉิน",
-                dash_total_goals: "เป้าหมายทั้งหมด",
-                dash_completed_goals: "เป้าหมายที่สำเร็จ",
-                dash_streak_desc: "นับเฉพาะวันที่มีการออมจริง",
-                dash_emergency_target: "เป้าหมายสำรอง 3 เดือน",
-                dash_active_goals: "รายการที่กำลังดำเนินอยู่",
-                dash_trend_title: "แนวโน้มการสะสมเงินออม",
-                dash_ai_health: "คะแนนวิเคราะห์ AI",
-                dash_consistency: "ดรรชนีวินัยการออม",
-                sav_entry_title: "บันทึกการออมเงิน",
-                sav_entry_subtitle: "ระบบประทับตราวันที่และเวลาอัตโนมัติ",
-                sav_amount_label: "จำนวนเงินออม (*)",
-                sav_note_label: "หมายเหตุ / รายการ",
-                sav_auto_date: "วันที่บันทึก",
-                sav_auto_time: "เวลาที่บันทึก",
-                sav_save_btn: "บันทึกข้อมูล",
-                goals_title: "จัดการเป้าหมายการออม",
-                goals_subtitle: "กำหนด วางแผน และติดตามเป้าหมายทางการเงิน",
-                goals_add_new: "สร้างเป้าหมายใหม่",
-                ai_engine_title: "ระบบวิเคราะห์อัตโนมัติ AI Prediction",
-                ai_engine_subtitle: "วิเคราะห์พฤติกรรม คาดการณ์การเติบโต และความสำเร็จ",
-                ai_health_score_label: "คะแนนสุขภาพการออม:",
-                ai_avg_daily: "เฉลี่ยการออม/วัน",
-                ai_goal_completion_chance: "โอกาสบรรลุเป้าหมาย",
-                ai_forecast_30: "คาดการณ์ 30 วันข้างหน้า",
-                heatmap_title: "ปฏิทินวินัยการออม (Heatmap Calendar)",
-                heatmap_subtitle: "แสดงวินัยรายวัน (สีแดง = ออมน้อย/เว้น, สีเขียว = ออมต่อเนื่อง)",
-                chart_growth_title: "กราฟแนวโน้มสะสมรวม",
-                chart_monthly_title: "เปรียบเทียบยอดออมรายเดือน",
-                hist_title: "ประวัติการบันทึกเงินออม",
-                hist_subtitle: "ค้นหา แก้ไข และตรวจสอบรายการทั้งหมด",
-                th_date: "วัน-เวลาที่บันทึก",
-                th_amount: "จำนวนเงิน",
-                th_note: "หมายเหตุ",
-                th_actions: "จัดการ",
-                set_title: "ตั้งค่าระบบ",
-                set_subtitle: "ปรับแต่งภาษา การแสดงผล และระบบทำงานอัตโนมัติ",
-                set_lang_title: "ภาษาของระบบ",
-                set_lang_desc: "สลับการแสดงผลระหว่างภาษาไทยและภาษาอังกฤษ",
-                set_theme_title: "นโยบายธีมอัตโนมัติ",
-                set_theme_desc: "ใช้งาน Soft Dark Theme จนถึง 31 ธันวาคม 2026",
-                set_notif_title: "การแจ้งเตือนอัตโนมัติ",
-                set_notif_1: "แจ้งเตือนให้ออมเงิน & เตือนใกล้ถึงเป้าหมาย",
-                set_notif_2: "แจ้งเตือนวันปิดระบบ & ปรับปรุงระบบประจำวัน",
-                set_refresh_btn: "ซิงค์ข้อมูล (F5)",
-                modal_goal_name: "ชื่อเป้าหมาย (*)",
-                modal_target_amount: "ยอดเงินเป้าหมาย (*)",
-                modal_deadline: "วันสิ้นสุดเป้าหมาย (*)",
-                notif_center_title: "ศูนย์แจ้งเตือน",
-                notif_clear_all: "ล้างการแจ้งเตือนทั้งหมด",
-                btn_cancel: "ยกเลิก",
-                btn_save: "บันทึกเป้าหมาย",
-                memorial_mode_title: "เปิดใช้งาน Soft Dark Enterprise Theme",
-                lock_reopen: "ระบบจะเปิดให้บริการอัตโนมัติในวันทำการถัดไป เวลา 00:01 น."
-            }
-        };
-
-        // APPLICATION STATE
+        // Application State
         let state = {
-            lang: 'EN',
-            currency: 'THB',
             savings: [],
             goals: [],
             notifications: [],
-            currentTab: 'dashboard',
-            streak: 0,
-            saverLevel: 'Beginner'
+            currency: "THB",
+            rates: { THB: 1, USD: 0.028, EUR: 0.026, JPY: 4.12, GBP: 0.022 },
+            lang: "en",
+            isLocked: false,
+            lockReason: ""
         };
 
-        // Chart instances
-        let dashTrendChartInstance = null;
-        let growthChartInstance = null;
-        let monthlyChartInstance = null;
+        // Thai Public Holidays (2026 List for Business Calendar Check)
+        const THAI_HOLIDAYS_2026 = [
+            "2026-01-01", "2026-02-26", "2026-04-13", "2026-04-14", "2026-04-15",
+            "2026-05-01", "2026-05-04", "2026-06-03", "2026-07-28", "2026-08-12",
+            "2026-10-13", "2026-10-23", "2026-12-05", "2026-12-10", "2026-12-31"
+        ];
 
-        // Check Business Operating Calendar & Maintenance Mode
-        function checkSystemOperatingHours() {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = now.getMonth(); // 0-11
-            const date = now.getDate();
-            const day = now.getDay(); // 0 = Sun, 6 = Sat
-            const hours = now.getHours();
-
-            let isLocked = false;
-            let lockTitle = "";
-            let lockMsg = "";
-
-            // 1. Weekend Check (Sat/Sun)
-            if (day === 0 || day === 6) {
-                isLocked = true;
-                lockTitle = state.lang === 'TH' ? 'ระบบปิดทำการวันหยุดเสาร์-อาทิตย์' : 'System Closed (Weekend)';
-                lockMsg = state.lang === 'TH' 
-                    ? 'FinSave Pro ปิดทำการในวันเสาร์และวันอาทิตย์ตาม Business Calendar ระบบจะเปิดให้บันทึกข้อมูลอีกครั้งในวันจันทร์' 
-                    : 'FinSave Pro is closed on Saturdays and Sundays. Systems will reopen on Monday.';
+        // i18n Translation Dictionary
+        const i18n = {
+            en: {
+                "nav.dashboard": "Dashboard",
+                "nav.savings": "Savings",
+                "nav.goals": "Goals",
+                "nav.analytics": "Analytics",
+                "nav.saverLevel": "Saver Level",
+                "nav.history": "History",
+                "nav.settings": "Settings",
+                "dash.totalSavings": "Total Savings",
+                "dash.streak": "Saving Streak",
+                "dash.streakSub": "Active continuous days",
+                "dash.saverLevel": "Saver Level",
+                "dash.emergencyFund": "Emergency Fund",
+                "dash.totalGoals": "Total Goals",
+                "dash.goalsActive": "Active financial targets",
+                "dash.completedGoals": "Completed Goals",
+                "heatmap.title": "Saving Discipline Heatmap",
+                "heatmap.sub": "Daily financial commitment visualization",
+                "heatmap.low": "Low",
+                "heatmap.high": "High",
+                "ai.title": "AI Prediction Health Score",
+                "ai.consistency": "Saving Consistency",
+                "savings.addTitle": "Record New Savings",
+                "savings.addSub": "System automatically logs date, time, and currency conversion.",
+                "savings.amount": "Amount",
+                "savings.note": "Note / Category",
+                "savings.submitBtn": "Record Deposit",
+                "goals.title": "Financial Target Goals",
+                "goals.sub": "Set specific deadlines and monitor automated progress metrics.",
+                "goals.createBtn": "Create Target Goal",
+                "goals.modalTitle": "Add Target Goal",
+                "goals.name": "Goal Name",
+                "goals.target": "Target Amount",
+                "goals.deadline": "Deadline Date",
+                "analytics.title": "Real-time Financial Analytics & AI",
+                "analytics.sub": "Comparative saving trends and machine learning forecasts.",
+                "analytics.totalGraph": "Total Saving Graph",
+                "analytics.monthlyComparison": "Monthly Comparison",
+                "ai.engineTitle": "AI Forecast & Saving Recommendation",
+                "ai.engineSub": "Automated behavioural analytics based on savings velocity",
+                "ai.growthRate": "Saving Growth Rate",
+                "ai.growthSub": "Outperforming average benchmark",
+                "ai.completionChance": "Goal Completion Chance",
+                "ai.chanceSub": "Based on active target deadlines",
+                "ai.avgDeposit": "Average Saving Deposit",
+                "ai.avgSub": "Per savings transaction",
+                "ai.recommendationTitle": "Monthly Recommendation",
+                "level.title": "Saver Level Progression",
+                "level.sub": "Calculated directly from Total Savings, Continuous Streak, and Goal Achievements.",
+                "history.title": "Saving Records History",
+                "history.sub": "Comprehensive record ledger with search and edit operations.",
+                "settings.title": "System Settings",
+                "settings.sub": "Configure preferences and regional parameters.",
+                "settings.lang": "System Language",
+                "settings.langSub": "Switch between Thai and English languages.",
+                "settings.theme": "Theme Mode",
+                "settings.noti": "Automated Notifications",
+                "settings.notiSub": "Receive alerts for goals, maintenance, and streak maintenance.",
+                "settings.refresh": "Sync & Refresh App",
+                "settings.refreshSub": "Force synchronize local memory with remote cloud database.",
+                "settings.refreshBtn": "Refresh Data",
+                "noti.centerTitle": "Notification Center",
+                "noti.clear": "Clear All",
+                "btn.cancel": "Cancel",
+                "btn.save": "Save Goal"
+            },
+            th: {
+                "nav.dashboard": "แดชบอร์ด",
+                "nav.savings": "บันทึกการออม",
+                "nav.goals": "เป้าหมายการออม",
+                "nav.analytics": "วิเคราะห์ข้อมูล",
+                "nav.saverLevel": "ระดับนักออม",
+                "nav.history": "ประวัติการออม",
+                "nav.settings": "ตั้งค่าระบบ",
+                "dash.totalSavings": "ยอดเงินออมรวม",
+                "dash.streak": "สถิติการออมต่อเนื่อง",
+                "dash.streakSub": "จำนวนวันที่ออมจริง",
+                "dash.saverLevel": "ระดับนักออม",
+                "dash.emergencyFund": "กองทุนสำรองฉุกเฉิน",
+                "dash.totalGoals": "เป้าหมายทั้งหมด",
+                "dash.goalsActive": "เป้าหมายที่กำลังดำเนินการ",
+                "dash.completedGoals": "เป้าหมายสำเร็จ",
+                "heatmap.title": "ปฏิทินวินัยการออมเงิน",
+                "heatmap.sub": "แสดงความสม่ำเสมอในการออมเงินรายวัน",
+                "heatmap.low": "น้อย",
+                "heatmap.high": "มาก",
+                "ai.title": "คะแนนสุขภาพการออม AI",
+                "ai.consistency": "ความสม่ำเสมอ",
+                "savings.addTitle": "บันทึกการออมเงินใหม่",
+                "savings.addSub": "ระบบบันทึกวันที่ เวลา และอัตราแลกเปลี่ยนอัตโนมัติ",
+                "savings.amount": "จำนวนเงิน",
+                "savings.note": "หมายเหตุ / หมวดหมู่",
+                "savings.submitBtn": "บันทึกเงินออม",
+                "goals.title": "เป้าหมายทางการเงิน",
+                "goals.sub": "กำหนดเป้าหมายและระยะเวลาเพื่อติดตามผลอัตโนมัติ",
+                "goals.createBtn": "สร้างเป้าหมายใหม่",
+                "goals.modalTitle": "เพิ่มเป้าหมายการออม",
+                "goals.name": "ชื่อเป้าหมาย",
+                "goals.target": "จำนวนเงินเป้าหมาย",
+                "goals.deadline": "วันที่กำหนดส่ง",
+                "analytics.title": "วิเคราะห์การเงินและ AI",
+                "analytics.sub": "กราฟเปรียบเทียบแนวโน้มการออมและการคาดการณ์อัจฉริยะ",
+                "analytics.totalGraph": "กราฟแนวโน้มเงินออมรวม",
+                "analytics.monthlyComparison": "การเปรียบเทียบรายเดือน",
+                "ai.engineTitle": "ระบบวิเคราะห์และคำแนะนำ AI",
+                "ai.engineSub": "วิเคราะห์พฤติกรรมการออมและประมวลผลอัตโนมัติ",
+                "ai.growthRate": "อัตราการเติบโตการออม",
+                "ai.growthSub": "สูงกว่าค่าเฉลี่ยมาตรฐาน",
+                "ai.completionChance": "โอกาสบรรลุเป้าหมาย",
+                "ai.chanceSub": "คำนวณจากเส้นตายและอัตราการออม",
+                "ai.avgDeposit": "ยอดออมเฉลี่ยต่อครั้ง",
+                "ai.avgSub": "ต่อรายการบันทึก",
+                "ai.recommendationTitle": "คำแนะนำประจำเดือน",
+                "level.title": "ระดับนักออมเงิน",
+                "level.sub": "คำนวณจากเงินออมรวม สถิติความต่อเนื่อง และเป้าหมายที่สำเร็จ",
+                "history.title": "ประวัติการบันทึกเงินออม",
+                "history.sub": "ตารางข้อมูลย้อนหลัง ค้นหา และแก้ไขรายการ",
+                "settings.title": "การตั้งค่าระบบ",
+                "settings.sub": "ปรับแต่งตัวเลือกการใช้งานและภาษา",
+                "settings.lang": "ภาษาของระบบ",
+                "settings.langSub": "สลับการแสดงผลระหว่างภาษาไทยและอังกฤษ",
+                "settings.theme": "โหมดธีม",
+                "settings.noti": "ระบบแจ้งเตือนอัตโนมัติ",
+                "settings.notiSub": "รับการแจ้งเตือนเป้าหมาย และแจ้งเตือนการปิดระบบ",
+                "settings.refresh": "ซิงค์และรีเฟรชข้อมูล",
+                "settings.refreshSub": "บังคับซิงค์ข้อมูลในเครื่องกับฐานข้อมูลคลาวด์",
+                "settings.refreshBtn": "รีเฟรชข้อมูล",
+                "noti.centerTitle": "ศูนย์การแจ้งเตือน",
+                "noti.clear": "ล้างทั้งหมด",
+                "btn.cancel": "ยกเลิก",
+                "btn.save": "บันทึกเป้าหมาย"
             }
+        };
 
-            // 2. Thailand Public Holiday Check (Built-in standard sample dates)
-            const thHolidays = ['01-01', '04-13', '04-14', '04-15', '05-01', '07-28', '08-12', '10-13', '10-23', '12-05', '12-31'];
-            const mmdd = String(month + 1).padStart(2, '0') + '-' + String(date).padStart(2, '0');
-            if (thHolidays.includes(mmdd)) {
-                isLocked = true;
-                lockTitle = state.lang === 'TH' ? 'ระบบปิดทำการวันหยุดราชการ' : 'System Closed (Public Holiday)';
-                lockMsg = state.lang === 'TH' 
-                    ? 'วันนี้เป็นวันหยุดราชการของประเทศไทย ระบบปิดการบันทึกข้อมูลชั่วคราว' 
-                    : 'Today is an official Thailand Public Holiday. System features are temporarily paused.';
-            }
+        window.onload = function() {
+            loadLocalState();
+            checkBusinessCalendarAndMaintenance();
+            switchTab('dashboard');
+            initCharts();
+            renderAll();
 
-            // 3. Daily Maintenance Mode Check (23:00 - 00:00)
-            if (hours === 23) {
-                isLocked = true;
-                lockTitle = state.lang === 'TH' ? 'ระบบกำลังปรับปรุงประจำวัน' : 'Daily System Maintenance';
-                lockMsg = state.lang === 'TH' 
-                    ? 'ระบบกำลังปรับปรุงเพื่อเพิ่มประสิทธิภาพการใช้งาน (23:00–00:00 น.) กรุณาเข้าใช้งานใหม่ภายหลัง' 
-                    : 'System is undergoing daily performance maintenance (23:00–00:00). Please try again later.';
-            }
-
-            const overlay = document.getElementById('system-lock-overlay');
-            if (isLocked) {
-                document.getElementById('lock-title').innerText = lockTitle;
-                document.getElementById('lock-message').innerText = lockMsg;
-                overlay.classList.remove('hidden');
-                
-                // Add maintenance alert to notifications if not added
-                addNotification(lockTitle, lockMsg, 'warning');
-            } else {
-                overlay.classList.add('hidden');
-            }
-        }
-
-        function initThemeAndLanguage() {
-            const now = new Date();
-            const year = now.getFullYear();
-
-            // Memorial Soft Dark Rule: Compulsory until Dec 31, 2026
-            if (year <= 2026) {
-                document.documentElement.classList.add('dark');
-                document.getElementById('memorial-mode-desc').innerText = 
-                    state.lang === 'TH' 
-                    ? 'ใช้งานธีม Soft Dark โดยอัตโนมัติจนถึง 31 ธ.ค. 2026 ระบบจะปรับธีมตามปกติเริ่ม 1 ม.ค. 2027' 
-                    : 'Soft Dark Theme active automatically until Dec 31, 2026. Standard theme rules resume Jan 1, 2027.';
-            }
-
-            // Set current date display
-            const dateStr = now.toISOString().split('T')[0];
-            document.getElementById('current-date-badge').innerText = dateStr;
-            document.getElementById('auto-date-val').innerText = dateStr;
-            document.getElementById('auto-time-val').innerText = now.toTimeString().split(' ')[0];
-        }
-
-        function setLanguage(lang) {
-            state.lang = lang;
-            document.getElementById('lang-switcher').value = lang;
+            // Set up interval checks for maintenance (23:00-23:15)
+            setInterval(checkBusinessCalendarAndMaintenance, 30000);
             
-            // Translate static text elements
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (I18N[lang] && I18N[lang][key]) {
-                    el.innerText = I18N[lang][key];
+            // Auto Sync with Google Sheets in background
+            syncWithGoogleSheets();
+        };
+
+        // Check Business Calendar Lockdown & Maintenance Mode
+        function checkBusinessCalendarAndMaintenance() {
+            const now = new Date();
+            const hours = now.getHours();
+            const mins = now.getMinutes();
+            const dayOfWeek = now.getDay(); // 0 = Sunday
+            const dateStr = now.toISOString().split('T')[0];
+
+            let locked = false;
+            let reason = "";
+
+            // Maintenance Mode Check: 23:00 to 23:15
+            if (hours === 23 && mins <= 15) {
+                locked = true;
+                reason = "ระบบกำลังปรับปรุงเพื่อเพิ่มประสิทธิภาพการใช้งาน กรุณาเข้าใช้งานใหม่ภายหลัง (Maintenance Mode 23:00-23:15)";
+                addNotification("System Maintenance Notice", reason, "warning");
+            }
+            // Sunday Lockdown Check
+            else if (dayOfWeek === 0) {
+                locked = true;
+                reason = "ระบบปิดการใช้งานทุกวันอาทิตย์ตามปฏิทินการทำงาน (Business Calendar Lockdown)";
+            }
+            // Thai Public Holiday Lockdown Check
+            else if (THAI_HOLIDAYS_2026.includes(dateStr)) {
+                locked = true;
+                reason = "ระบบปิดการใช้งานเนื่องในวันหยุดราชการของประเทศไทย";
+            }
+
+            state.isLocked = locked;
+            state.lockReason = reason;
+
+            const banner = document.getElementById('lockout-banner');
+            const submitBtn = document.getElementById('btn-submit-saving');
+
+            if (locked) {
+                banner.classList.remove('hidden');
+                document.getElementById('lockout-msg').innerText = reason;
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
                 }
-            });
-
-            // Re-render UI components to reflect language change
-            renderAll();
-        }
-
-        function changeCurrency(curr) {
-            state.currency = curr;
-            document.getElementById('form-currency-symbol').innerText = CURRENCY_RATES[curr].symbol;
-            renderAll();
-        }
-
-        function formatAmount(valInTHB) {
-            const currObj = CURRENCY_RATES[state.currency] || CURRENCY_RATES.THB;
-            const converted = valInTHB * currObj.rate;
-            return currObj.symbol + converted.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            } else {
+                banner.classList.add('hidden');
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
         }
 
         function switchTab(tabId) {
-            state.currentTab = tabId;
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('nav-item-active'));
+            const targetView = document.getElementById(`view-${tabId}`);
+            if (targetView) targetView.classList.remove('hidden');
 
-            const target = document.getElementById('tab-' + tabId);
-            if (target) target.classList.remove('hidden');
-
-            const navBtn = document.getElementById('nav-' + tabId);
-            if (navBtn) navBtn.classList.add('nav-item-active');
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('nav-item-active'));
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            if (activeNav) activeNav.classList.add('nav-item-active');
 
             if (tabId === 'analytics') {
-                setTimeout(renderCharts, 100);
+                updateCharts();
             }
         }
 
@@ -1020,567 +992,466 @@
             menu.classList.toggle('hidden');
         }
 
-        async function syncDataFromSheets() {
-            const syncIcon = document.getElementById('sync-icon');
-            if (syncIcon) syncIcon.classList.add('fa-spin');
-
-            try {
-                // Fetch from Apps Script URL
-                const response = await fetch(`${APPS_SCRIPT_URL}?spreadsheetId=${SPREADSHEET_ID}&action=readAll`);
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.savings) state.savings = data.savings;
-                    if (data.goals) state.goals = data.goals;
-                } else {
-                    fallbackToLocalStorage();
-                }
-            } catch (err) {
-                console.warn('Google Sheets sync unavailable, using local persistence.', err);
-                fallbackToLocalStorage();
-            } finally {
-                if (syncIcon) syncIcon.classList.remove('fa-spin');
-                calculateMetrics();
-                renderAll();
-            }
-        }
-
-        function fallbackToLocalStorage() {
-            const savedSavings = localStorage.getItem('finsave_savings');
-            const savedGoals = localStorage.getItem('finsave_goals');
-            if (savedSavings) state.savings = JSON.parse(savedSavings);
-            if (savedGoals) state.goals = JSON.parse(savedGoals);
-        }
-
-        function saveToLocalStorage() {
-            localStorage.setItem('finsave_savings', JSON.stringify(state.savings));
-            localStorage.setItem('finsave_goals', JSON.stringify(state.goals));
-        }
-
-        async function pushToSheets(action, payload) {
-            saveToLocalStorage();
-            try {
-                fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action, spreadsheetId: SPREADSHEET_ID, ...payload })
-                });
-            } catch (e) {
-                console.error('Async push error:', e);
-            }
-        }
-
-        function calculateMetrics() {
-            // Sort savings chronologically
-            state.savings.sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime));
-
-            // Calculate Streak Plus (count consecutive active savings days)
-            const uniqueDates = [...new Set(state.savings.map(s => s.dateTime.split(' ')[0]))].sort();
-            let streak = 0;
-            if (uniqueDates.length > 0) {
-                const today = new Date().toISOString().split('T')[0];
-                let current = new Date(uniqueDates[uniqueDates.length - 1]);
-                
-                // Count backwards
-                streak = 1;
-                for (let i = uniqueDates.length - 2; i >= 0; i--) {
-                    const prev = new Date(uniqueDates[i]);
-                    const diffDays = Math.round((current - prev) / (1000 * 3600 * 24));
-                    if (diffDays === 1) {
-                        streak++;
-                        current = prev;
-                    } else if (diffDays > 1) {
-                        break;
-                    }
-                }
-            }
-            state.streak = streak;
-
-            // Calculate Total Savings
-            const totalSavings = state.savings.reduce((acc, s) => acc + parseFloat(s.amount || 0), 0);
-
-            // Compute Completed Goals
-            const completedGoals = state.goals.filter(g => {
-                const saved = state.savings.filter(s => s.goalId === g.id).reduce((a, b) => a + parseFloat(b.amount || 0), 0);
-                return saved >= parseFloat(g.targetAmount);
-            }).length;
-
-            // Calculate Saver Level
-            if (totalSavings >= 500000 && completedGoals >= 3) {
-                state.saverLevel = 'Diamond';
-            } else if (totalSavings >= 250000 && completedGoals >= 1) {
-                state.saverLevel = 'Platinum';
-            } else if (totalSavings >= 100000 && streak >= 14) {
-                state.saverLevel = 'Gold';
-            } else if (totalSavings >= 250000 || (totalSavings >= 25000 && streak >= 7)) {
-                state.saverLevel = 'Silver';
-            } else if (totalSavings >= 5000 && streak >= 3) {
-                state.saverLevel = 'Bronze';
-            } else {
-                state.saverLevel = 'Beginner';
-            }
-        }
-
-        function handleSavingSubmit(e) {
-            e.preventDefault();
-            const amountInput = document.getElementById('saving-amount');
-            const noteInput = document.getElementById('saving-note');
-            const editId = document.getElementById('saving-id').value;
-
-            const now = new Date();
-            const dateTimeStr = now.toISOString().split('T')[0] + ' ' + now.toTimeString().split(' ')[0];
-
-            if (editId) {
-                // Edit existing
-                const idx = state.savings.findIndex(s => s.id === editId);
-                if (idx !== -1) {
-                    state.savings[idx].amount = parseFloat(amountInput.value);
-                    state.savings[idx].note = noteInput.value || 'General Saving';
-                    pushToSheets('updateSaving', { saving: state.savings[idx] });
-                }
-            } else {
-                // Create new
-                const newSaving = {
-                    id: 'SAV-' + Date.now(),
-                    amount: parseFloat(amountInput.value),
-                    note: noteInput.value || (state.lang === 'TH' ? 'ออมประจำวัน' : 'Daily Saving'),
-                    dateTime: dateTimeStr
-                };
-                state.savings.push(newSaving);
-                pushToSheets('addSaving', { saving: newSaving });
-                
-                addNotification(
-                    state.lang === 'TH' ? 'บันทึกการออมสำเร็จ' : 'Saving Entry Recorded',
-                    `${formatAmount(newSaving.amount)} - ${newSaving.note}`,
-                    'success'
-                );
-            }
-
-            resetSavingForm();
-            calculateMetrics();
-            renderAll();
-            switchTab('history');
-        }
-
-        function resetSavingForm() {
-            document.getElementById('saving-id').value = '';
-            document.getElementById('saving-amount').value = '';
-            document.getElementById('saving-note').value = '';
-            document.getElementById('btn-cancel-saving').classList.add('hidden');
-        }
-
-        function editSaving(id) {
-            const item = state.savings.find(s => s.id === id);
-            if (!item) return;
-
-            switchTab('savings');
-            document.getElementById('saving-id').value = item.id;
-            document.getElementById('saving-amount').value = item.amount;
-            document.getElementById('saving-note').value = item.note;
-            document.getElementById('btn-cancel-saving').classList.remove('hidden');
-        }
-
-        function deleteSaving(id) {
-            if (confirm(state.lang === 'TH' ? 'ยืนยันการลบรายการนี้?' : 'Confirm delete this entry?')) {
-                state.savings = state.savings.filter(s => s.id !== id);
-                pushToSheets('deleteSaving', { id });
-                calculateMetrics();
-                renderAll();
-            }
-        }
-
-        function openGoalModal(id = null) {
-            const modal = document.getElementById('goal-modal');
-            modal.classList.remove('hidden');
+        function setLanguage(lang) {
+            state.lang = lang;
+            saveLocalState();
             
-            if (id) {
-                const g = state.goals.find(x => x.id === id);
-                if (g) {
-                    document.getElementById('goal-id').value = g.id;
-                    document.getElementById('goal-name').value = g.name;
-                    document.getElementById('goal-target').value = g.targetAmount;
-                    document.getElementById('goal-deadline').value = g.deadline;
+            // Translate UI elements
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang] && i18n[lang][key]) {
+                    el.innerText = i18n[lang][key];
                 }
-            } else {
-                document.getElementById('goal-id').value = '';
-                document.getElementById('goal-name').value = '';
-                document.getElementById('goal-target').value = '';
-                document.getElementById('goal-deadline').value = '';
-            }
+            });
         }
 
-        function closeGoalModal() {
-            document.getElementById('goal-modal').classList.add('hidden');
-        }
-
-        function handleGoalSubmit(e) {
-            e.preventDefault();
-            const id = document.getElementById('goal-id').value;
-            const name = document.getElementById('goal-name').value;
-            const target = parseFloat(document.getElementById('goal-target').value);
-            const deadline = document.getElementById('goal-deadline').value;
-
-            if (id) {
-                const idx = state.goals.findIndex(g => g.id === id);
-                if (idx !== -1) {
-                    state.goals[idx].name = name;
-                    state.goals[idx].targetAmount = target;
-                    state.goals[idx].deadline = deadline;
-                    pushToSheets('updateGoal', { goal: state.goals[idx] });
-                }
-            } else {
-                const newGoal = {
-                    id: 'GOAL-' + Date.now(),
-                    name,
-                    targetAmount: target,
-                    deadline,
-                    createdDate: new Date().toISOString().split('T')[0]
-                };
-                state.goals.push(newGoal);
-                pushToSheets('addGoal', { goal: newGoal });
-            }
-
-            closeGoalModal();
-            calculateMetrics();
+        function changeCurrency(curr) {
+            state.currency = curr;
+            document.querySelectorAll('.current-curr-code').forEach(el => el.innerText = curr);
+            const symbols = { THB: '฿', USD: '$', EUR: '€', JPY: '¥', GBP: '£' };
+            document.querySelectorAll('.current-curr-symbol').forEach(el => el.innerText = symbols[curr] || '$');
             renderAll();
         }
 
-        function deleteGoal(id) {
-            if (confirm(state.lang === 'TH' ? 'ยืนยันการลบเป้าหมายนี้?' : 'Confirm delete this goal?')) {
-                state.goals = state.goals.filter(g => g.id !== id);
-                pushToSheets('deleteGoal', { id });
-                calculateMetrics();
-                renderAll();
-            }
+        function formatMoney(amountInTHB) {
+            const rate = state.rates[state.currency] || 1;
+            const converted = amountInTHB * rate;
+            const symbols = { THB: '฿', USD: '$', EUR: '€', JPY: '¥', GBP: '£' };
+            const sym = symbols[state.currency] || '$';
+            return `${converted.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${sym}`;
         }
 
-        function renderHeatmap() {
-            const grid = document.getElementById('heatmap-calendar-grid');
-            grid.innerHTML = '';
-
-            // Group savings by date YYYY-MM-DD
-            const savingsByDate = {};
-            state.savings.forEach(s => {
-                const d = s.dateTime.split(' ')[0];
-                savingsByDate[d] = (savingsByDate[d] || 0) + parseFloat(s.amount);
-            });
-
-            // Generate last 52 weeks (approx 364 days)
-            const today = new Date();
-            const startDate = new Date();
-            startDate.setDate(today.getDate() - 364);
-
-            for (let w = 0; w < 52; w++) {
-                const col = document.createElement('div');
-                col.className = 'flex flex-col gap-1';
-
-                for (let d = 0; d < 7; d++) {
-                    const current = new Date(startDate);
-                    current.setDate(startDate.getDate() + (w * 7 + d));
-                    const dateKey = current.toISOString().split('T')[0];
-                    const amount = savingsByDate[dateKey] || 0;
-
-                    const box = document.createElement('div');
-                    box.className = 'w-3 h-3 rounded-xs transition-transform hover:scale-125 cursor-pointer';
-
-                    // Color code
-                    if (amount === 0) box.classList.add('bg-gray-800/80');
-                    else if (amount < 100) box.classList.add('bg-red-900/60');
-                    else if (amount < 500) box.classList.add('bg-amber-600/70');
-                    else if (amount < 2000) box.classList.add('bg-emerald-600/80');
-                    else box.classList.add('bg-brand-500');
-
-                    box.title = `${dateKey}: ${formatAmount(amount)}`;
-                    col.appendChild(box);
-                }
-                grid.appendChild(col);
-            }
-        }
-
-        function renderAll() {
-            const totalSavings = state.savings.reduce((a, b) => a + parseFloat(b.amount || 0), 0);
-
-            // Dashboard KPI Cards
-            document.getElementById('dash-total-savings').innerText = formatAmount(totalSavings);
-            document.getElementById('dash-streak-count').innerText = `${state.streak} ${state.lang === 'TH' ? 'วัน' : 'Days'}`;
-            document.getElementById('dash-saver-level').innerText = state.saverLevel;
-            document.getElementById('dash-emergency-fund').innerText = formatAmount(totalSavings * 0.3); // 30% allocated for emergency
-            document.getElementById('dash-total-goals').innerText = state.goals.length;
-
-            const completedGoalsCount = state.goals.filter(g => {
-                const saved = state.savings.filter(s => s.goalId === g.id).reduce((a, b) => a + parseFloat(b.amount || 0), 0);
-                return saved >= parseFloat(g.targetAmount);
-            }).length;
-            document.getElementById('dash-completed-goals').innerText = completedGoalsCount;
-
-            const pct = state.goals.length > 0 ? Math.round((completedGoalsCount / state.goals.length) * 100) : 0;
-            document.getElementById('dash-goals-pct').innerText = `${pct}% ${state.lang === 'TH' ? 'อัตราความสำเร็จ' : 'Success Rate'}`;
-
-            // Goals Grid
-            renderGoalsGrid();
-
-            // History Table
-            renderHistoryTable();
-
-            // Heatmap
-            renderHeatmap();
-
-            // Saver Level Screen
-            renderSaverLevelScreen();
-
-            // AI Prediction Engine
-            renderAIEngine(totalSavings);
-
-            // Charts
-            renderCharts();
-        }
-
-        function renderGoalsGrid() {
-            const grid = document.getElementById('goals-grid');
-            grid.innerHTML = '';
-
-            if (state.goals.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500 text-sm">${state.lang === 'TH' ? 'ยังไม่มีเป้าหมายการออม' : 'No saving goals created yet.'}</div>`;
+        function handleSaveEntry(e) {
+            e.preventDefault();
+            if (state.isLocked) {
+                showToast(state.lockReason, "error");
                 return;
             }
 
-            state.goals.forEach(g => {
-                const totalSavingsForGoal = state.savings.reduce((acc, s) => acc + parseFloat(s.amount || 0), 0); // Aggregate overall or goal specific
-                const target = parseFloat(g.targetAmount);
-                const pct = Math.min(100, Math.round((totalSavingsForGoal / target) * 100));
-                const remaining = Math.max(0, target - totalSavingsForGoal);
+            const inputAmount = parseFloat(document.getElementById('save-amount').value);
+            const inputNote = document.getElementById('save-note').value.trim();
+
+            if (!inputAmount || inputAmount <= 0) return;
+
+            // Convert input amount based on selected currency to base THB for internal storage
+            const currentRate = state.rates[state.currency] || 1;
+            const amountInTHB = inputAmount / currentRate;
+
+            const now = new Date();
+            const newRecord = {
+                id: 'SAV_' + Date.now(),
+                amount: amountInTHB,
+                note: inputNote,
+                date: now.toISOString().split('T')[0],
+                time: now.toTimeString().split(' ')[0].substring(0, 5),
+                timestamp: now.getTime()
+            };
+
+            state.savings.unshift(newRecord);
+            document.getElementById('form-add-saving').reset();
+
+            showToast("Deposit successfully recorded!", "success");
+            addNotification("Savings Recorded", `Added ${formatMoney(amountInTHB)} - ${inputNote}`, "success");
+
+            saveLocalState();
+            renderAll();
+            syncWithGoogleSheets();
+            switchTab('dashboard');
+        }
+
+        function calculateStreak() {
+            if (state.savings.length === 0) return 0;
+
+            // Extract unique sorted dates
+            const dates = [...new Set(state.savings.map(s => s.date))].sort().reverse();
+            let streak = 0;
+            let checkDate = new Date();
+
+            for (let i = 0; i < 365; i++) {
+                const dateStr = checkDate.toISOString().split('T')[0];
+                if (dates.includes(dateStr)) {
+                    streak++;
+                    checkDate.setDate(checkDate.getDate() - 1);
+                } else {
+                    // Check if missing date was Sunday or Holiday (exempt from breaking streak)
+                    const dayOfWeek = checkDate.getDay();
+                    if (dayOfWeek === 0 || THAI_HOLIDAYS_2026.includes(dateStr)) {
+                        checkDate.setDate(checkDate.getDate() - 1);
+                        continue;
+                    }
+                    break;
+                }
+            }
+            return streak;
+        }
+
+        function calculateSaverLevel(totalSavings, streak, completedGoals) {
+            if (totalSavings >= 500000) return "Diamond";
+            if (totalSavings >= 200000) return "Platinum";
+            if (totalSavings >= 50000) return "Gold";
+            if (totalSavings >= 10000) return "Silver";
+            if (totalSavings >= 1000) return "Bronze";
+            return "Beginner";
+        }
+
+        function renderAll() {
+            const totalSavings = state.savings.reduce((acc, curr) => acc + curr.amount, 0);
+            const streak = calculateStreak();
+            const totalGoals = state.goals.length;
+            const completedGoals = state.goals.filter(g => getGoalSaved(g.id) >= g.target).length;
+            const currentLevel = calculateSaverLevel(totalSavings, streak, completedGoals);
+
+            // Update Dashboard UI Elements
+            document.getElementById('dash-total-savings').innerText = formatMoney(totalSavings);
+            document.getElementById('dash-streak').innerText = `${streak} ${state.lang === 'th' ? 'วัน' : 'Days'}`;
+            document.getElementById('dash-saver-level').innerText = currentLevel;
+            document.getElementById('dash-emergency-fund').innerText = formatMoney(totalSavings * 0.4); // 40% auto allocated to emergency pool
+            document.getElementById('dash-total-goals').innerText = totalGoals;
+            document.getElementById('dash-completed-goals').innerText = completedGoals;
+            document.getElementById('dash-completed-percent').innerText = `${totalGoals > 0 ? Math.round((completedGoals/totalGoals)*100) : 0}% success rate`;
+
+            // Render Heatmap
+            renderHeatmap();
+
+            // Render Goals List
+            renderGoals();
+
+            // Render History Table
+            renderHistoryTable();
+
+            // Render Saver Level Badges
+            renderSaverLevelBadges(currentLevel);
+
+            // Update AI Insights
+            updateAIAnalysis(totalSavings, streak);
+        }
+
+        function renderHeatmap() {
+            const container = document.getElementById('heatmap-container');
+            container.innerHTML = '';
+
+            const today = new Date();
+            const daysInMonth = 28;
+            
+            for (let i = daysInMonth - 1; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(today.getDate() - i);
+                const dateStr = d.toISOString().split('T')[0];
+
+                const daySavings = state.savings
+                    .filter(s => s.date === dateStr)
+                    .reduce((sum, s) => sum + s.amount, 0);
+
+                let levelClass = 'heatmap-0';
+                if (daySavings > 0 && daySavings < 500) levelClass = 'heatmap-1';
+                else if (daySavings >= 500 && daySavings < 2000) levelClass = 'heatmap-2';
+                else if (daySavings >= 2000 && daySavings < 5000) levelClass = 'heatmap-3';
+                else if (daySavings >= 5000) levelClass = 'heatmap-4';
+
+                const cell = document.createElement('div');
+                cell.className = `h-8 rounded-lg flex flex-col items-center justify-center text-[9px] font-bold ${levelClass} transition transform hover:scale-110 cursor-pointer`;
+                cell.title = `${dateStr}: ${formatMoney(daySavings)}`;
+                cell.innerHTML = `<span class="text-slate-300 opacity-80">${d.getDate()}</span>`;
+                container.appendChild(cell);
+            }
+        }
+
+        function getGoalSaved(goalId) {
+            // Distribute savings proportionally or sequential logic across goals
+            const total = state.savings.reduce((sum, s) => sum + s.amount, 0);
+            return total;
+        }
+
+        function renderGoals() {
+            const container = document.getElementById('goals-list-container');
+            container.innerHTML = '';
+
+            if (state.goals.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12 glass-panel rounded-2xl text-slate-400 text-xs">
+                        <i class="fa-solid fa-bullseye text-3xl mb-2 text-slate-600 block"></i>
+                        No financial goals created yet. Click "Create Target Goal" to start.
+                    </div>`;
+                return;
+            }
+
+            const totalSavings = state.savings.reduce((sum, s) => sum + s.amount, 0);
+
+            state.goals.forEach(goal => {
+                const progress = Math.min(100, Math.round((totalSavings / goal.target) * 100));
+                const remaining = Math.max(0, goal.target - totalSavings);
 
                 const card = document.createElement('div');
-                card.className = 'glass-card p-5 rounded-2xl border border-gray-800 space-y-4 relative overflow-hidden';
+                card.className = "glass-panel p-5 rounded-2xl flex flex-col justify-between border border-slate-800 hover:border-slate-700 transition";
                 card.innerHTML = `
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <h3 class="font-bold text-white text-base">${g.name}</h3>
-                            <p class="text-xs text-gray-400">Target Deadline: ${g.deadline}</p>
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-sm text-white">${goal.name}</h3>
+                            <button onclick="deleteGoal('${goal.id}')" class="text-slate-500 hover:text-red-400 text-xs transition"><i class="fa-solid fa-trash"></i></button>
                         </div>
-                        <div class="flex gap-1">
-                            <button onclick="openGoalModal('${g.id}')" class="p-1.5 text-gray-400 hover:text-white"><i class="fa-solid fa-pen text-xs"></i></button>
-                            <button onclick="deleteGoal('${g.id}')" class="p-1.5 text-gray-400 hover:text-red-400"><i class="fa-solid fa-trash text-xs"></i></button>
-                        </div>
-                    </div>
-
-                    <div class="space-y-1">
-                        <div class="flex justify-between text-xs">
-                            <span class="text-gray-400">${formatAmount(totalSavingsForGoal)} of ${formatAmount(target)}</span>
-                            <span class="font-bold ${pct >= 100 ? 'text-green-400' : 'text-brand-400'}">${pct}%</span>
-                        </div>
-                        <div class="w-full bg-gray-800 h-2.5 rounded-full overflow-hidden border border-gray-700">
-                            <div class="bg-gradient-to-r from-brand-500 to-emerald-400 h-full rounded-full transition-all" style="width: ${pct}%"></div>
+                        <p class="text-[10px] text-slate-400 mt-1">Deadline: ${goal.deadline}</p>
+                        
+                        <div class="mt-4 space-y-1">
+                            <div class="flex justify-between text-xs">
+                                <span class="text-slate-400">Progress</span>
+                                <span class="font-bold text-brand-400">${progress}%</span>
+                            </div>
+                            <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
+                                <div class="bg-gradient-to-r from-brand-600 to-emerald-400 h-full rounded-full transition-all duration-500" style="width: ${progress}%"></div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="flex justify-between text-[11px] text-gray-400 pt-2 border-t border-gray-800">
-                        <span>Remaining: ${formatAmount(remaining)}</span>
-                        <span>${pct >= 100 ? '🎉 Achieved!' : 'In Progress'}</span>
+                    <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center text-xs">
+                        <span class="text-slate-400">Target: <strong class="text-white">${formatMoney(goal.target)}</strong></span>
+                        <span class="text-slate-400">Remaining: <strong class="text-amber-400">${formatMoney(remaining)}</strong></span>
                     </div>
                 `;
-                grid.appendChild(card);
+                container.appendChild(card);
             });
         }
 
         function renderHistoryTable() {
             const tbody = document.getElementById('history-table-body');
-            const search = document.getElementById('history-search').value.toLowerCase();
             tbody.innerHTML = '';
 
-            const filtered = state.savings.filter(s => 
-                s.note.toLowerCase().includes(search) || s.dateTime.includes(search)
-            );
-
-            if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-gray-500">${state.lang === 'TH' ? 'ไม่พบรายการเงินออม' : 'No records found.'}</td></tr>`;
+            if (state.savings.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-slate-500 text-xs">No savings entries recorded yet.</td></tr>`;
                 return;
             }
 
-            filtered.slice().reverse().forEach(s => {
+            state.savings.forEach(item => {
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-gray-800/40 transition-colors';
+                tr.className = "hover:bg-slate-800/40 transition";
                 tr.innerHTML = `
-                    <td class="py-3 px-4 font-mono text-gray-300">${s.dateTime}</td>
-                    <td class="py-3 px-4 font-bold text-white">${formatAmount(s.amount)}</td>
-                    <td class="py-3 px-4 text-gray-300">${s.note}</td>
-                    <td class="py-3 px-4 text-right space-x-2">
-                        <button onclick="editSaving('${s.id}')" class="text-gray-400 hover:text-brand-400"><i class="fa-solid fa-pen"></i></button>
-                        <button onclick="deleteSaving('${s.id}')" class="text-gray-400 hover:text-red-400"><i class="fa-solid fa-trash"></i></button>
+                    <td class="px-6 py-4 whitespace-nowrap text-slate-300 font-mono">${item.date} <span class="text-slate-500 text-[10px]">${item.time}</span></td>
+                    <td class="px-6 py-4 font-medium text-white">${item.note}</td>
+                    <td class="px-6 py-4 font-bold text-brand-400">${formatMoney(item.amount)}</td>
+                    <td class="px-6 py-4 text-right space-x-2">
+                        <button onclick="openEditModal('${item.id}')" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteSaving('${item.id}')" class="p-1.5 rounded-lg bg-slate-800 hover:bg-red-900/40 text-red-400 transition"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        function renderSaverLevelScreen() {
-            document.getElementById('level-current-name').innerText = `${state.saverLevel} Saver`;
-            const tierCards = ['Beginner', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond'];
-            tierCards.forEach(t => {
-                const card = document.getElementById('tier-card-' + t);
-                if (card) {
-                    if (t === state.saverLevel) {
-                        card.classList.remove('opacity-60');
-                        card.classList.add('border-brand-500', 'ring-1', 'ring-brand-500');
+        function filterHistory() {
+            const query = document.getElementById('history-search').value.toLowerCase();
+            const rows = document.querySelectorAll('#history-table-body tr');
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+
+        function deleteSaving(id) {
+            state.savings = state.savings.filter(s => s.id !== id);
+            saveLocalState();
+            renderAll();
+            syncWithGoogleSheets();
+            showToast("Saving record deleted.", "info");
+        }
+
+        function openGoalModal() {
+            document.getElementById('modal-goal').classList.remove('hidden');
+        }
+
+        function closeGoalModal() {
+            document.getElementById('modal-goal').classList.add('hidden');
+        }
+
+        function handleSaveGoal(e) {
+            e.preventDefault();
+            const name = document.getElementById('goal-name').value.trim();
+            const targetInput = parseFloat(document.getElementById('goal-target').value);
+            const deadline = document.getElementById('goal-deadline').value;
+
+            const rate = state.rates[state.currency] || 1;
+            const targetInTHB = targetInput / rate;
+
+            const newGoal = {
+                id: 'GOAL_' + Date.now(),
+                name,
+                target: targetInTHB,
+                deadline,
+                created: new Date().toISOString().split('T')[0]
+            };
+
+            state.goals.push(newGoal);
+            saveLocalState();
+            renderAll();
+            closeGoalModal();
+            showToast("Goal created successfully!", "success");
+        }
+
+        function deleteGoal(id) {
+            state.goals = state.goals.filter(g => g.id !== id);
+            saveLocalState();
+            renderAll();
+            showToast("Goal deleted.", "info");
+        }
+
+        function openEditModal(id) {
+            const item = state.savings.find(s => s.id === id);
+            if (!item) return;
+
+            const rate = state.rates[state.currency] || 1;
+            document.getElementById('edit-saving-id').value = item.id;
+            document.getElementById('edit-saving-amount').value = (item.amount * rate).toFixed(2);
+            document.getElementById('edit-saving-note').value = item.note;
+            document.getElementById('modal-edit-saving').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('modal-edit-saving').classList.add('hidden');
+        }
+
+        function handleUpdateEntry(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-saving-id').value;
+            const amountInput = parseFloat(document.getElementById('edit-saving-amount').value);
+            const note = document.getElementById('edit-saving-note').value.trim();
+
+            const item = state.savings.find(s => s.id === id);
+            if (item) {
+                const rate = state.rates[state.currency] || 1;
+                item.amount = amountInput / rate;
+                item.note = note;
+                saveLocalState();
+                renderAll();
+                syncWithGoogleSheets();
+                closeEditModal();
+                showToast("Entry updated successfully.", "success");
+            }
+        }
+
+        function renderSaverLevelBadges(activeLevel) {
+            const levels = ["Beginner", "Bronze", "Silver", "Gold", "Platinum", "Diamond"];
+            levels.forEach(lvl => {
+                const badge = document.getElementById(`badge-${lvl.toLowerCase()}`);
+                const card = document.getElementById(`tier-${lvl.toLowerCase()}`);
+                if (badge && card) {
+                    if (lvl === activeLevel) {
+                        badge.innerText = "ACTIVE LEVEL";
+                        badge.className = "text-xs font-bold py-1.5 px-3 rounded-lg text-center bg-brand-500 text-slate-950 shadow-md shadow-brand-500/30";
+                        card.classList.add('border-brand-500', 'bg-slate-800/80');
                     } else {
-                        card.classList.add('opacity-60');
-                        card.classList.remove('border-brand-500', 'ring-1', 'ring-brand-500');
+                        badge.innerText = "Locked";
+                        badge.className = "text-xs font-semibold py-1.5 px-3 rounded-lg text-center bg-slate-800 text-slate-400";
+                        card.classList.remove('border-brand-500', 'bg-slate-800/80');
                     }
                 }
             });
         }
 
-        function renderAIEngine(totalSavings) {
-            const count = state.savings.length;
-            const avgDaily = count > 0 ? totalSavings / Math.max(1, count) : 0;
-            document.getElementById('ai-avg-daily').innerText = formatAmount(avgDaily);
-            document.getElementById('ai-forecast-30').innerText = '+' + formatAmount(avgDaily * 30);
+        function updateAIAnalysis(totalSavings, streak) {
+            const score = Math.min(100, Math.round((streak * 5) + (totalSavings > 10000 ? 50 : 20)));
+            document.getElementById('dash-ai-score').innerText = `${score}/100`;
+
+            const avgDeposit = state.savings.length > 0 ? (totalSavings / state.savings.length) : 0;
+            document.getElementById('ai-avg-deposit').innerText = formatMoney(avgDeposit);
+
+            const recText = document.getElementById('ai-recommendation-text');
+            if (streak < 3) {
+                recText.innerText = "Focus on building daily deposit discipline. Saving even small amounts continuously boosts AI prediction health score significantly.";
+            } else {
+                recText.innerText = "Excellent financial consistency! Consider re-allocating surplus deposits into high-yield goal targets to reach Platinum status faster.";
+            }
         }
 
-        function renderCharts() {
-            if (typeof Chart === 'undefined') return;
+        // Chart.js Setup
+        let chartTrend = null;
+        let chartBar = null;
 
-            // Monthly breakdown
-            const monthlySums = {};
-            state.savings.forEach(s => {
-                const ym = s.dateTime.substring(0, 7); // YYYY-MM
-                monthlySums[ym] = (monthlySums[ym] || 0) + parseFloat(s.amount);
+        function initCharts() {
+            const ctx1 = document.getElementById('chart-total-trend').getContext('2d');
+            chartTrend = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                    datasets: [{
+                        label: 'Accumulated Savings',
+                        data: [1000, 3000, 6500, 12000, 18000, 24000, 32000],
+                        borderColor: '#22c55e',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }
+                    }
+                }
             });
 
-            const labels = Object.keys(monthlySums).sort();
-            const dataVals = labels.map(l => monthlySums[l]);
-
-            // Dash Trend Chart
-            const ctx1 = document.getElementById('dashTrendChart')?.getContext('2d');
-            if (ctx1) {
-                if (dashTrendChartInstance) dashTrendChartInstance.destroy();
-                dashTrendChartInstance = new Chart(ctx1, {
-                    type: 'line',
-                    data: {
-                        labels: labels.length ? labels : ['Jul 2026'],
-                        datasets: [{
-                            label: 'Savings Trend',
-                            data: dataVals.length ? dataVals : [0],
-                            borderColor: '#22c55e',
-                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                            fill: true,
-                            tension: 0.4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } },
-                            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } }
-                        }
+            const ctx2 = document.getElementById('chart-monthly-bar').getContext('2d');
+            chartBar = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                    datasets: [{
+                        label: 'Monthly Deposits',
+                        data: [1000, 2000, 3500, 5500, 6000, 6000, 8000],
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }
                     }
-                });
-            }
-
-            // Analytics Growth Chart
-            const ctx2 = document.getElementById('growthChart')?.getContext('2d');
-            if (ctx2) {
-                if (growthChartInstance) growthChartInstance.destroy();
-                let accum = 0;
-                const accumVals = dataVals.map(v => { accum += v; return accum; });
-
-                growthChartInstance = new Chart(ctx2, {
-                    type: 'line',
-                    data: {
-                        labels: labels.length ? labels : ['Jul 2026'],
-                        datasets: [{
-                            label: 'Cumulative Growth',
-                            data: accumVals.length ? accumVals : [0],
-                            borderColor: '#3b82f6',
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                            fill: true,
-                            tension: 0.3
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } },
-                            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } }
-                        }
-                    }
-                });
-            }
-
-            // Monthly Comparison Bar Chart
-            const ctx3 = document.getElementById('monthlyChart')?.getContext('2d');
-            if (ctx3) {
-                if (monthlyChartInstance) monthlyChartInstance.destroy();
-                monthlyChartInstance = new Chart(ctx3, {
-                    type: 'bar',
-                    data: {
-                        labels: labels.length ? labels : ['Jul 2026'],
-                        datasets: [{
-                            label: 'Monthly Total',
-                            data: dataVals.length ? dataVals : [0],
-                            backgroundColor: '#10b981',
-                            borderRadius: 6
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } },
-                            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } }
-                        }
-                    }
-                });
-            }
-        }
-
-        function toggleNotificationDrawer() {
-            const drawer = document.getElementById('notif-drawer');
-            drawer.classList.toggle('hidden');
-        }
-
-        function addNotification(title, message, type = 'info') {
-            state.notifications.unshift({
-                id: Date.now(),
-                title,
-                message,
-                type,
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                }
             });
+        }
 
+        function updateCharts() {
+            if (!chartTrend || !chartBar) return;
+            const total = state.savings.reduce((acc, curr) => acc + curr.amount, 0);
+            chartTrend.data.datasets[0].data[6] = total;
+            chartTrend.update();
+        }
+
+        function toggleNotificationCenter() {
+            const dropdown = document.getElementById('notification-dropdown');
+            dropdown.classList.toggle('hidden');
+            document.getElementById('noti-badge').classList.add('hidden');
+        }
+
+        function addNotification(title, message, type = "info") {
+            const noti = { id: Date.now(), title, message, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) };
+            state.notifications.unshift(noti);
             renderNotifications();
+            document.getElementById('noti-badge').classList.remove('hidden');
         }
 
         function renderNotifications() {
-            const list = document.getElementById('notif-list');
-            const redDot = document.getElementById('notif-red-dot');
-
-            if (state.notifications.length > 0) {
-                redDot.classList.remove('hidden');
-            } else {
-                redDot.classList.add('hidden');
-            }
-
+            const list = document.getElementById('noti-list');
             list.innerHTML = '';
+
             if (state.notifications.length === 0) {
-                list.innerHTML = `<div class="text-center py-8 text-gray-500 text-xs">${state.lang === 'TH' ? 'ไม่มีการแจ้งเตือนใหม่' : 'No new notifications'}</div>`;
+                list.innerHTML = `<p class="text-center text-slate-500 py-4">No new notifications</p>`;
                 return;
             }
 
             state.notifications.forEach(n => {
                 const item = document.createElement('div');
-                item.className = 'p-3 rounded-xl bg-gray-800/80 border border-gray-700/60 text-xs space-y-1';
+                item.className = "p-2.5 rounded-lg bg-slate-800/60 border border-slate-700/50 space-y-1";
                 item.innerHTML = `
-                    <div class="flex items-center justify-between font-bold text-white">
+                    <div class="flex items-center justify-between font-bold text-slate-200">
                         <span>${n.title}</span>
-                        <span class="text-[10px] text-gray-400 font-mono">${n.time}</span>
+                        <span class="text-[9px] text-slate-500">${n.time}</span>
                     </div>
-                    <p class="text-gray-300">${n.message}</p>
+                    <p class="text-slate-400 text-[11px] leading-snug">${n.message}</p>
                 `;
                 list.appendChild(item);
             });
@@ -1591,52 +1462,78 @@
             renderNotifications();
         }
 
-        function setupPWA() {
-            // Generate PWA manifest dynamically
-            const manifest = {
-                name: "FinSave Pro 2026 Enterprise",
-                short_name: "FinSave",
-                start_url: ".",
-                display: "standalone",
-                background_color: "#0b0f17",
-                theme_color: "#0f172a",
-                icons: [
-                    {
-                        src: "https://placehold.co/192x192/16a34a/ffffff?text=FinSave",
-                        sizes: "192x192",
-                        type: "image/png"
-                    }
-                ]
-            };
-            const stringManifest = JSON.stringify(manifest);
-            const blob = new Blob([stringManifest], {type: 'application/json'});
-            const manifestURL = URL.createObjectURL(blob);
-            document.getElementById('manifest-placeholder').setAttribute('href', manifestURL);
+        function showToast(msg, type = "info") {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bgClass = type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-red-600' : 'bg-slate-800 border border-slate-700';
+            toast.className = `${bgClass} text-white text-xs px-4 py-3 rounded-xl shadow-xl transition transform duration-300 pointer-events-auto flex items-center space-x-2`;
+            toast.innerHTML = `<i class="fa-solid fa-circle-info"></i> <span>${msg}</span>`;
+            container.appendChild(toast);
 
-            // Register inline service worker
-            if ('serviceWorker' in navigator) {
-                const swCode = `
-                    self.addEventListener('install', e => e.waitUntil(self.skipWaiting()));
-                    self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
-                    self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => new Response("Offline"))));
-                `;
-                const swBlob = new Blob([swCode], {type: 'text/javascript'});
-                const swUrl = URL.createObjectURL(swBlob);
-                navigator.serviceWorker.register(swUrl).catch(err => console.log('SW setup skipped:', err));
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'scale-95');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Local Storage Sync
+        function saveLocalState() {
+            localStorage.setItem('finsave_v540_state', JSON.stringify({
+                savings: state.savings,
+                goals: state.goals,
+                lang: state.lang,
+                currency: state.currency
+            }));
+        }
+
+        function loadLocalState() {
+            const saved = localStorage.getItem('finsave_v540_state');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    state.savings = parsed.savings || [];
+                    state.goals = parsed.goals || [];
+                    state.lang = parsed.lang || "en";
+                    state.currency = parsed.currency || "THB";
+                    
+                    document.getElementById('setting-language').value = state.lang;
+                    document.getElementById('currency-select').value = state.currency;
+                    setLanguage(state.lang);
+                } catch(e) {
+                    console.error("Error loading saved state", e);
+                }
             }
         }
 
-        window.onload = function() {
-            initThemeAndLanguage();
-            checkSystemOperatingHours();
-            setupPWA();
+        function refreshData() {
+            showToast("Synchronizing with cloud...", "info");
+            syncWithGoogleSheets();
+        }
 
-            // Initial Data Fetch
-            syncDataFromSheets();
+        // Background Google Apps Script Integration
+        function syncWithGoogleSheets() {
+            if (!APPS_SCRIPT_URL) return;
 
-            // Setup default periodic operational check
-            setInterval(checkSystemOperatingHours, 60000); // Check every minute
-        };
+            const payload = {
+                spreadsheetId: SPREADSHEET_ID,
+                action: "SYNC_DATA",
+                data: {
+                    savings: state.savings,
+                    goals: state.goals
+                }
+            };
+
+            fetch(APPS_SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                console.log("Background Google Sheets sync completed.");
+            }).catch(err => {
+                console.warn("Google Sheets Sync notice:", err);
+            });
+        }
     </script>
 </body>
 </html>
